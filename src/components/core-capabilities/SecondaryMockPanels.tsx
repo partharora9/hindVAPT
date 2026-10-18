@@ -2,70 +2,59 @@
 
 import React, { useState, useEffect } from "react";
 import { motion, useReducedMotion } from "framer-motion";
+import { SampleDataBadge } from "@/components/ui/SampleDataBadge";
 
 interface ParallaxProps {
   parallaxOffset?: { x: number; y: number };
 }
 
 // ----------------------------------------------------------------------
-// CARD 2: RESPONSE ACTIONS PANEL (445×305px)
+// CARD 2 LEFT: ATTACK PATH PANEL (445×305px)
 // ----------------------------------------------------------------------
-export function ResponseActionsPanel({ parallaxOffset = { x: 0, y: 0 } }: ParallaxProps) {
+export function AttackPathPanel({ parallaxOffset = { x: 0, y: 0 } }: ParallaxProps) {
   const shouldReduceMotion = useReducedMotion();
-  const [activeIdx, setActiveIdx] = useState(0);
+  const [activeStep, setActiveStep] = useState(1);
 
   useEffect(() => {
     if (shouldReduceMotion) return;
     const interval = setInterval(() => {
-      setActiveIdx((prev) => (prev + 1) % 3);
-    }, 3500);
+      setActiveStep((prev) => (prev + 1) % 4);
+    }, 3200);
     return () => clearInterval(interval);
   }, [shouldReduceMotion]);
 
-  const actions = [
+  const steps = [
     {
-      id: "action-1",
-      title: "Isolate Host",
-      target: "Workload: k8s-prod-04",
-      duration: "42ms",
-      status: "CONTAINED",
+      id: "step-1",
+      number: "01",
+      name: "Reconnaissance",
+      target: "api.example.com / subdomains",
+      status: "COMPLETED",
       statusColor: "#4CB8FF",
-      icon: (
-        <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5 text-[#4CB8FF]" stroke="currentColor" strokeWidth="1.8">
-          <rect x="5" y="11" width="14" height="10" rx="2" />
-          <path d="M8 11V7a4 4 0 0 1 8 0v4" />
-        </svg>
-      ),
     },
     {
-      id: "action-2",
-      title: "Revoke IAM Token",
-      target: "IAM: service-agent-vault",
-      duration: "18ms",
-      status: "REVOKED",
-      statusColor: "#1E9BFF",
-      icon: (
-        <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5 text-[#4CB8FF]" stroke="currentColor" strokeWidth="1.8">
-          <circle cx="8" cy="15" r="4" />
-          <path d="M10.85 12.15L19 4" />
-          <path d="M18 5L20 7" />
-          <path d="M15 8L17 10" />
-        </svg>
-      ),
+      id: "step-2",
+      number: "02",
+      name: "Initial Foothold",
+      target: "Auth bypass · CWE-287",
+      status: "EXPLOITED",
+      statusColor: "#FF8E3C",
     },
     {
-      id: "action-3",
-      title: "Block Ingress IP",
-      target: "Edge: cloudflare-waf",
-      duration: "65ms",
-      status: "BLOCKED",
-      statusColor: "#6B7FA8",
-      icon: (
-        <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5 text-[#4CB8FF]" stroke="currentColor" strokeWidth="1.8">
-          <circle cx="12" cy="12" r="9" />
-          <line x1="5.5" y1="5.5" x2="18.5" y2="18.5" />
-        </svg>
-      ),
+      id: "step-3",
+      number: "03",
+      name: "Privilege Escalation",
+      target: "Role assignment · CWE-269",
+      status: "ESCALATED",
+      statusColor: "#FF4C68",
+    },
+    {
+      id: "step-4",
+      number: "04",
+      name: "Data Access",
+      target: "Customer records · Proof of concept",
+      status: "PROVEN",
+      statusColor: "#FF4C68",
     },
   ];
 
@@ -75,72 +64,66 @@ export function ResponseActionsPanel({ parallaxOffset = { x: 0, y: 0 } }: Parall
         x: parallaxOffset.x * 0.6,
         y: parallaxOffset.y * 0.6,
       }}
-      className="relative w-full max-w-[445px] h-[305px] rounded-[12px] bg-[#141C2E] border border-[rgba(120,150,255,0.14)] p-5 sm:p-6 shadow-[0_16px_40px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-md overflow-hidden flex flex-col justify-between"
+      className="relative w-full max-w-[445px] h-[305px] rounded-[12px] bg-[#141C2E] border border-[rgba(120,150,255,0.14)] p-4 sm:p-5 shadow-[0_16px_40px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-md overflow-hidden flex flex-col justify-between"
     >
-      <div className="relative z-10 flex items-center justify-between pb-3 border-b border-[rgba(120,150,255,0.08)]">
+      <div className="relative z-10 flex items-center justify-between pb-2.5 border-b border-[rgba(120,150,255,0.08)]">
         <span className="text-[13px] sm:text-[14px] font-bold tracking-[0.12em] text-[#C3D4FF] uppercase font-mono">
-          RESPONSE ACTIONS
+          ATTACK PATH
         </span>
-        <div className="flex items-center gap-1.5">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#4CB8FF] animate-pulse" />
-          <span className="text-[11px] text-[#4CB8FF] font-mono tracking-wider">AUTONOMOUS</span>
-        </div>
+        <SampleDataBadge />
       </div>
 
-      <div className="relative z-10 flex flex-col gap-2.5 my-auto">
-        {actions.map((act, i) => {
-          const isActive = activeIdx === i;
+      <div className="relative z-10 flex flex-col gap-2 my-auto">
+        {steps.map((st, i) => {
+          const isActive = activeStep === i;
           return (
             <div
-              key={act.id}
-              className={`flex items-center justify-between p-2.5 rounded-[8px] border transition-all ${
+              key={st.id}
+              className={`flex items-center justify-between p-2 rounded-[8px] border transition-all ${
                 isActive
-                  ? "bg-[rgba(30,155,255,0.12)] border-[#1E9BFF]/40 shadow-[0_0_15px_rgba(30,155,255,0.1)]"
+                  ? "bg-[rgba(30,155,255,0.12)] border-[#1E9BFF]/40 shadow-[0_0_12px_rgba(30,155,255,0.1)]"
                   : "bg-[#0B1426]/50 border-[rgba(120,150,255,0.08)]"
               }`}
             >
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-[8px] bg-[#0E1A30] border border-[rgba(30,155,255,0.2)] flex items-center justify-center">
-                  {act.icon}
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-[13px] sm:text-[14px] font-bold text-white leading-tight">
-                    {act.title}
+              <div className="flex items-center gap-2.5 min-w-0">
+                <span className="text-[11px] font-mono font-bold text-[#1E9BFF] w-6 shrink-0">
+                  {st.number}
+                </span>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-[12px] sm:text-[13px] font-bold text-white leading-tight truncate">
+                    {st.name}
                   </span>
-                  <span className="text-[11px] text-[#8FA3C7] font-mono mt-0.5">{act.target}</span>
+                  <span className="text-[10px] text-[#8FA3C7] font-mono truncate">{st.target}</span>
                 </div>
               </div>
 
-              <div className="flex flex-col items-end gap-1">
-                <span className="text-[12px] font-mono text-[#4CB8FF] font-bold">{act.duration}</span>
-                <span
-                  className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border"
-                  style={{
-                    color: act.statusColor,
-                    borderColor: `${act.statusColor}40`,
-                    backgroundColor: `${act.statusColor}15`,
-                  }}
-                >
-                  {act.status}
-                </span>
-              </div>
+              <span
+                className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border shrink-0"
+                style={{
+                  color: st.statusColor,
+                  borderColor: `${st.statusColor}40`,
+                  backgroundColor: `${st.statusColor}15`,
+                }}
+              >
+                {st.status}
+              </span>
             </div>
           );
         })}
       </div>
 
       <div className="flex items-center justify-between pt-2 border-t border-[rgba(120,150,255,0.08)] text-[11px] font-mono text-[#8FA3C7]">
-        <span>Mean Containment Latency</span>
-        <span className="text-[#4CB8FF] font-bold">34ms avg</span>
+        <span>Chained Vulnerability Exploit</span>
+        <span className="text-[#4CB8FF] font-bold">Proof of Concept</span>
       </div>
     </motion.div>
   );
 }
 
 // ----------------------------------------------------------------------
-// CARD 2: PLAYBOOK RUNS PANEL (250×300px)
+// CARD 2 RIGHT: TIME TO COMPROMISE PANEL (250×300px)
 // ----------------------------------------------------------------------
-export function PlaybookRunsPanel({ parallaxOffset = { x: 0, y: 0 } }: ParallaxProps) {
+export function TimeToCompromisePanel({ parallaxOffset = { x: 0, y: 0 } }: ParallaxProps) {
   return (
     <motion.div
       style={{
@@ -150,48 +133,48 @@ export function PlaybookRunsPanel({ parallaxOffset = { x: 0, y: 0 } }: ParallaxP
       className="relative w-full max-w-[250px] h-[300px] rounded-[12px] bg-[#141C2E] border border-[rgba(120,150,255,0.14)] p-4 sm:p-5 shadow-[0_16px_40px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-md flex flex-col justify-between select-none"
     >
       <div className="flex items-center justify-between pb-2 border-b border-[rgba(120,150,255,0.08)]">
-        <span className="text-[13px] font-bold text-[#C3D4FF] tracking-wide font-mono">
-          Playbook Runs
+        <span className="text-[12px] font-bold text-[#C3D4FF] tracking-wide font-mono">
+          TIME TO COMPROMISE
         </span>
-        <span className="text-[11px] font-mono text-[#4CB8FF] font-bold">100% AUTO</span>
+        <SampleDataBadge />
       </div>
 
-      {/* Center Graph Sparkline */}
+      {/* Sparkline Visual */}
       <div className="relative flex flex-col items-center justify-center my-auto py-2">
         <div className="text-2xl font-bold font-mono text-white mb-2 filter drop-shadow-[0_0_8px_rgba(76,184,255,0.5)]">
-          1,429
+          4.2h
         </div>
         <div className="w-full h-[80px]">
           <svg viewBox="0 0 200 80" className="w-full h-full overflow-visible">
             <defs>
-              <linearGradient id="sparkGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#4CB8FF" stopOpacity="0.4" />
+              <linearGradient id="compromiseGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#FF4C68" stopOpacity="0.4" />
                 <stop offset="100%" stopColor="#1E9BFF" stopOpacity="0.0" />
               </linearGradient>
             </defs>
             <path
-              d="M 0 65 Q 30 50, 60 55 T 120 30 T 170 18 L 200 22 L 200 80 L 0 80 Z"
-              fill="url(#sparkGrad)"
+              d="M 0 70 Q 40 60, 80 40 T 140 25 L 200 15 L 200 80 L 0 80 Z"
+              fill="url(#compromiseGrad)"
             />
             <path
-              d="M 0 65 Q 30 50, 60 55 T 120 30 T 170 18 L 200 22"
+              d="M 0 70 Q 40 60, 80 40 T 140 25 L 200 15"
               fill="none"
-              stroke="#4CB8FF"
+              stroke="#FF4C68"
               strokeWidth="2.5"
             />
-            <circle cx="200" cy="22" r="3.5" fill="#FFFFFF" filter="drop-shadow(0 0 6px #1E9BFF)" />
+            <circle cx="200" cy="15" r="3.5" fill="#FFFFFF" filter="drop-shadow(0 0 6px #FF4C68)" />
           </svg>
         </div>
       </div>
 
       <div className="flex flex-col gap-1.5 pt-2 border-t border-[rgba(120,150,255,0.08)] text-[11px] font-mono">
         <div className="flex justify-between text-[#8FA3C7]">
-          <span>Auto-Mitigated</span>
-          <span className="text-[#4CB8FF]">99.4%</span>
+          <span>Recon to Access</span>
+          <span className="text-[#FF4C68] font-bold">4.2 hours</span>
         </div>
         <div className="flex justify-between text-[#8FA3C7]">
-          <span>Quarantined</span>
-          <span className="text-[#1E9BFF]">0.6%</span>
+          <span>Business Impact</span>
+          <span className="text-[#1E9BFF]">High Severity</span>
         </div>
       </div>
     </motion.div>
@@ -199,33 +182,30 @@ export function PlaybookRunsPanel({ parallaxOffset = { x: 0, y: 0 } }: ParallaxP
 }
 
 // ----------------------------------------------------------------------
-// CARD 3: ASSET EXPOSURE PANEL (445×305px)
+// CARD 3 LEFT: ENGAGEMENT TIMELINE PANEL (445×305px)
 // ----------------------------------------------------------------------
-export function AssetExposurePanel({ parallaxOffset = { x: 0, y: 0 } }: ParallaxProps) {
-  const assets = [
+export function EngagementTimelinePanel({ parallaxOffset = { x: 0, y: 0 } }: ParallaxProps) {
+  const timeline = [
     {
-      id: "asset-1",
-      title: "Multi-Cloud Workloads",
-      subtitle: "AWS · GCP · Azure (418 nodes)",
-      risk: "CRITICAL",
-      riskPercent: 84,
-      riskColor: "#FF4C68",
+      id: "phase-1",
+      name: "Day 1-2: Scoping & Recon",
+      detail: "Asset discovery, surface enumeration, rules confirmed",
+      status: "DONE",
+      statusColor: "#4CB8FF",
     },
     {
-      id: "asset-2",
-      title: "Managed Endpoints",
-      subtitle: "12,450 active host agents",
-      risk: "LOW RISK",
-      riskPercent: 22,
-      riskColor: "#4CB8FF",
+      id: "phase-2",
+      name: "Day 3-7: Discovery & Exploitation",
+      detail: "Manual business logic testing and safe exploit chains",
+      status: "ACTIVE",
+      statusColor: "#1E9BFF",
     },
     {
-      id: "asset-3",
-      title: "Edge Gateways & APIs",
-      subtitle: "84 publicly exposed endpoints",
-      risk: "MEDIUM",
-      riskPercent: 58,
-      riskColor: "#1E9BFF",
+      id: "phase-3",
+      name: "Day 8-10: Reporting & Walkthrough",
+      detail: "CVSS scored report, PoC delivery, developer debrief",
+      status: "PLANNED",
+      statusColor: "#6B7FA8",
     },
   ];
 
@@ -239,61 +219,50 @@ export function AssetExposurePanel({ parallaxOffset = { x: 0, y: 0 } }: Parallax
     >
       <div className="relative z-10 flex items-center justify-between pb-3 border-b border-[rgba(120,150,255,0.08)]">
         <span className="text-[13px] sm:text-[14px] font-bold tracking-[0.12em] text-[#C3D4FF] uppercase font-mono">
-          ASSET EXPOSURE
+          ENGAGEMENT TIMELINE
         </span>
-        <span className="text-[11px] text-[#6B7FA8] font-mono tracking-wider">GRAPH-MAPPED</span>
+        <SampleDataBadge />
       </div>
 
       <div className="relative z-10 flex flex-col gap-2.5 my-auto">
-        {assets.map((ast) => (
+        {timeline.map((item) => (
           <div
-            key={ast.id}
+            key={item.id}
             className="flex items-center justify-between p-2.5 rounded-[8px] bg-[#0B1426]/50 border border-[rgba(120,150,255,0.08)]"
           >
-            <div className="flex flex-col">
-              <span className="text-[13px] sm:text-[14px] font-bold text-white leading-tight">
-                {ast.title}
+            <div className="flex flex-col min-w-0 pr-2">
+              <span className="text-[13px] font-bold text-white leading-tight truncate">
+                {item.name}
               </span>
-              <span className="text-[11px] text-[#8FA3C7] font-mono mt-0.5">{ast.subtitle}</span>
+              <span className="text-[11px] text-[#8FA3C7] font-mono mt-0.5 truncate">{item.detail}</span>
             </div>
 
-            <div className="flex flex-col items-end gap-1.5">
-              <span
-                className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded border"
-                style={{
-                  color: ast.riskColor,
-                  borderColor: `${ast.riskColor}40`,
-                  backgroundColor: `${ast.riskColor}15`,
-                }}
-              >
-                {ast.risk}
-              </span>
-              <div className="w-[84px] h-1.5 bg-[#0B1426] rounded-full overflow-hidden border border-[rgba(76,184,255,0.2)]">
-                <div
-                  className="h-full rounded-full"
-                  style={{
-                    width: `${ast.riskPercent}%`,
-                    backgroundColor: ast.riskColor,
-                  }}
-                />
-              </div>
-            </div>
+            <span
+              className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded border shrink-0"
+              style={{
+                color: item.statusColor,
+                borderColor: `${item.statusColor}40`,
+                backgroundColor: `${item.statusColor}15`,
+              }}
+            >
+              {item.status}
+            </span>
           </div>
         ))}
       </div>
 
       <div className="flex items-center justify-between pt-2 border-t border-[rgba(120,150,255,0.08)] text-[11px] font-mono text-[#8FA3C7]">
-        <span>Attack Path Reduction</span>
-        <span className="text-[#4CB8FF] font-bold">-92% exposure</span>
+        <span>Standard engagement cycle</span>
+        <span className="text-[#4CB8FF] font-bold">1-2 weeks</span>
       </div>
     </motion.div>
   );
 }
 
 // ----------------------------------------------------------------------
-// CARD 3: EXPOSURE SCORE PANEL (250×300px)
+// CARD 3 RIGHT: DETECTION COVERAGE GAUGE PANEL (250×300px)
 // ----------------------------------------------------------------------
-export function ExposureScorePanel({ parallaxOffset = { x: 0, y: 0 } }: ParallaxProps) {
+export function DetectionCoveragePanel({ parallaxOffset = { x: 0, y: 0 } }: ParallaxProps) {
   return (
     <motion.div
       style={{
@@ -303,10 +272,10 @@ export function ExposureScorePanel({ parallaxOffset = { x: 0, y: 0 } }: Parallax
       className="relative w-full max-w-[250px] h-[300px] rounded-[12px] bg-[#141C2E] border border-[rgba(120,150,255,0.14)] p-4 sm:p-5 shadow-[0_16px_40px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-md flex flex-col justify-between select-none"
     >
       <div className="flex items-center justify-between pb-2 border-b border-[rgba(120,150,255,0.08)]">
-        <span className="text-[13px] font-bold text-[#C3D4FF] tracking-wide font-mono">
-          Exposure Score
+        <span className="text-[12px] font-bold text-[#C3D4FF] tracking-wide font-mono">
+          DETECTION COVERAGE
         </span>
-        <span className="text-[11px] font-mono text-[#4CB8FF] font-bold">GRADE A</span>
+        <SampleDataBadge />
       </div>
 
       {/* Radial Gauge */}
@@ -338,22 +307,28 @@ export function ExposureScorePanel({ parallaxOffset = { x: 0, y: 0 } }: Parallax
             />
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-2xl font-bold font-mono text-white tracking-tight">88</span>
-            <span className="text-[10px] font-mono text-[#8FA3C7]">/ 100</span>
+            <span className="text-2xl font-bold font-mono text-white tracking-tight">86%</span>
+            <span className="text-[10px] font-mono text-[#8FA3C7]">ATT&CK</span>
           </div>
         </div>
       </div>
 
       <div className="flex flex-col gap-1 pt-2 border-t border-[rgba(120,150,255,0.08)] text-[11px] font-mono text-[#8FA3C7]">
         <div className="flex justify-between">
-          <span>Zero-Day Ingress</span>
-          <span className="text-[#4CB8FF]">0 found</span>
+          <span>Tested Techniques</span>
+          <span className="text-[#4CB8FF]">28 simulated</span>
         </div>
         <div className="flex justify-between">
-          <span>Shadow Subdomains</span>
-          <span className="text-[#1E9BFF]">Neutralized</span>
+          <span>Defensive Gaps</span>
+          <span className="text-[#FF8E3C]">4 flagged</span>
         </div>
       </div>
     </motion.div>
   );
 }
+
+// Backward-compatible exports
+export { AttackPathPanel as ResponseActionsPanel };
+export { TimeToCompromisePanel as PlaybookRunsPanel };
+export { EngagementTimelinePanel as AssetExposurePanel };
+export { DetectionCoveragePanel as ExposureScorePanel };

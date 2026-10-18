@@ -13,7 +13,7 @@ export function HudHeadlineLine({ isInView = true }: HudHeadlineLineProps) {
 
   return (
     <div
-      className="inline-block relative w-[180px] sm:w-[220px] h-[64px] sm:h-[76px] select-none pointer-events-none align-middle"
+      className="inline-block relative w-[120px] xs:w-[150px] sm:w-[220px] h-[48px] xs:h-[56px] sm:h-[76px] select-none pointer-events-none align-middle"
       aria-hidden="true"
     >
       <svg

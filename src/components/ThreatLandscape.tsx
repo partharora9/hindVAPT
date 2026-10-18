@@ -14,31 +14,30 @@ import { ThreatCard, type ThreatCardData } from "./threat-landscape/ThreatCard";
 import { GaugeIcon } from "./threat-landscape/GaugeIcon";
 import { RadarIcon } from "./threat-landscape/RadarIcon";
 import { WarningIcon } from "./threat-landscape/WarningIcon";
-import { FloatingBadgeCard } from "./FloatingBadgeCard";
+import { useGuaranteedInView } from "@/hooks/useGuaranteedInView";
 import { useScramble } from "@/hooks/useScramble";
 import { EASINGS } from "@/config/animation";
+
+import { HOME_CONTENT } from "@/content/home";
 
 // Typed Threat Cards Data Array
 const THREAT_CARDS_DATA: ThreatCardData[] = [
   {
-    id: "breach-detection",
-    title: "SLOW BREACH DETECTION",
-    description:
-      "Average time to identify and contain a data breach. Every hour of delay costs $37,000 in damages.",
+    id: "incomplete-coverage",
+    title: HOME_CONTENT.threatLandscape.cards[0].title,
+    description: HOME_CONTENT.threatLandscape.cards[0].description,
     iconComponent: GaugeIcon,
   },
   {
-    id: "scaling-blindspots",
-    title: "SCALING BLIND SPOTS",
-    description:
-      "Average cost of a mid-market breach. Scattered tools across cloud, endpoint exploit.",
+    id: "expanding-attack-surface",
+    title: HOME_CONTENT.threatLandscape.cards[1].title,
+    description: HOME_CONTENT.threatLandscape.cards[1].description,
     iconComponent: RadarIcon,
   },
   {
-    id: "alert-fatigue",
-    title: "ALERT FATIGUE",
-    description:
-      "Of security alerts go uninvestigated. Analysts are overwhelmed by false positives that bury the real threats.",
+    id: "scanner-noise",
+    title: HOME_CONTENT.threatLandscape.cards[2].title,
+    description: HOME_CONTENT.threatLandscape.cards[2].description,
     iconComponent: WarningIcon,
   },
 ];
@@ -50,15 +49,13 @@ interface ThreatLandscapeProps {
 
 export function ThreatLandscape({
   id = "threat-landscape",
-  showFloatingBadge = false,
 }: ThreatLandscapeProps) {
   const sectionRef = useRef<HTMLElement | null>(null);
   const shouldReduceMotion = useReducedMotion();
-  const [badgeVisible, setBadgeVisible] = useState(showFloatingBadge);
   const [hoveredCardId, setHoveredCardId] = useState<string | null>(null);
 
-  // Entrance trigger when section is ~25% in view (once)
-  const isInView = useInView(sectionRef, { amount: 0.25, once: true });
+  // Entrance trigger when section is ~25% in view (with guaranteed 1.2s fallback)
+  const isInView = useGuaranteedInView(sectionRef, { amount: 0.25, fallbackMs: 1200 });
 
   // Scroll parallax mapping
   const { scrollYProgress } = useScroll({
@@ -71,13 +68,13 @@ export function ThreatLandscape({
   const cardsParallaxY = useTransform(scrollYProgress, [0, 1], [-16, 16]);
 
   // Scramble decode effect on main headline
-  const headlineLine1 = useScramble("WHY TRADITIONAL SECURITY", {
+  const headlineLine1 = useScramble(HOME_CONTENT.threatLandscape.headlineLine1, {
     durationMs: 700,
     delayMs: 200,
     autoStart: isInView,
   });
 
-  const headlineLine2 = useScramble("TOOLS FALL SHORT", {
+  const headlineLine2 = useScramble(HOME_CONTENT.threatLandscape.headlineLine2, {
     durationMs: 600,
     delayMs: 350,
     autoStart: isInView,
@@ -87,7 +84,7 @@ export function ThreatLandscape({
     <section
       ref={sectionRef}
       id={id}
-      className="relative w-full bg-gradient-to-b from-[#020617] via-[#020617] to-[#030818] overflow-hidden select-none pt-20 sm:pt-24 lg:pt-28 pb-0"
+      className="relative w-full bg-gradient-to-b from-[#020617] via-[#020617] to-[#030818] overflow-x-clip select-none pt-20 sm:pt-24 lg:pt-28 pb-0 content-auto"
       aria-label="The Threat Landscape"
     >
       {/* Continuity: Shared background cyber grid and vignette */}
@@ -160,7 +157,7 @@ export function ThreatLandscape({
                 transition={{ duration: 0.8, delay: 0.5, ease: EASINGS.cyber }}
                 className="text-[16px] sm:text-[17px] lg:text-[18px] leading-[1.68] text-[#C3D4FF] max-w-[560px] font-mono font-normal select-none"
               >
-                Cyber threats evolve faster than legacy tools can adapt. Attackers use AI, automation, and zero-days — your defenses need to keep up.
+                {HOME_CONTENT.threatLandscape.paragraph}
               </motion.p>
             </div>
           </div>
@@ -198,12 +195,6 @@ export function ThreatLandscape({
           aria-hidden="true"
         />
       </div>
-
-      {/* Optional Floating Badge Card (Default OFF) */}
-      <FloatingBadgeCard
-        isVisible={badgeVisible}
-        onClose={() => setBadgeVisible(false)}
-      />
     </section>
   );
 }

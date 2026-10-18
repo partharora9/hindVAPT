@@ -1,3 +1,5 @@
+import { HOME_CONTENT } from "@/content/home";
+
 export interface LiveAlertItem {
   id: string;
   title: string;
@@ -6,20 +8,20 @@ export interface LiveAlertItem {
 }
 
 export const INITIAL_ALERTS: LiveAlertItem[] = [
-  { id: "alert-1", title: "BRUTE FORCE ATTEMPT", ip: "192.168.1.47" },
-  { id: "alert-2", title: "SUSPICIOUS OUTBOUND", ip: "216.239.38.10" },
-  { id: "alert-3", title: "PORT SCAN DETECTED", ip: "172.16.0.8" },
-  { id: "alert-4", title: "GEOIP ANOMALY", ip: "192.168.1.47" },
+  { id: "alert-1", title: "SQL INJECTION CONFIRMED", ip: "api.example.com/login" },
+  { id: "alert-2", title: "WEAK TLS CONFIGURATION", ip: "203.0.113.24:443" },
+  { id: "alert-3", title: "EXPOSED ADMIN PANEL", ip: "app.example.com/admin" },
+  { id: "alert-4", title: "MISSING RATE LIMITING", ip: "api.example.com/auth" },
 ];
 
 export const ALERT_POOL: Omit<LiveAlertItem, "id">[] = [
-  { title: "MALWARE SIGNATURE", ip: "10.0.4.112" },
-  { title: "DATA EXFIL ATTEMPT", ip: "185.220.101.5" },
-  { title: "CREDENTIAL STUFFING", ip: "198.51.100.24" },
-  { title: "DNS TUNNELING", ip: "203.0.113.88" },
-  { title: "RANSOMWARE PROBE", ip: "194.26.29.11" },
-  { title: "PRIVILEGE ESCALATION", ip: "10.240.0.15" },
-  { title: "SQL INJECTION VECTOR", ip: "45.154.255.8" },
+  { title: "IDOR VULNERABILITY CONFIRMED", ip: "api.example.com/v1/users/4102" },
+  { title: "S3 BUCKET PUBLIC LISTING", ip: "storage.example.com/backups" },
+  { title: "DEFAULT CREDENTIALS ACTIVE", ip: "203.0.113.88:8080" },
+  { title: "UNAUTHENTICATED GRAPHQL INTROSPECTION", ip: "api.example.com/graphql" },
+  { title: "CROSS-SITE SCRIPTING (STORED)", ip: "app.example.com/feedback" },
+  { title: "JWT WEAK HMAC SECRET", ip: "auth.example.com/token" },
+  { title: "CORS MISCONFIGURATION", ip: "api.example.com/data" },
 ];
 
 export interface InsightCardData {
@@ -32,40 +34,35 @@ export interface InsightCardData {
 export const INSIGHTS_DATA: InsightCardData[] = [
   // ROW 1
   {
-    id: "ai-fixing-issues",
+    id: "prioritised-remediation",
     row: 1,
-    title: "AI-POWERED FIXING ISSUES",
-    description:
-      "Experience the full power of Bester with no commitment. Sign up today and unlock all features",
+    title: HOME_CONTENT.insights.cardA.title,
+    description: HOME_CONTENT.insights.cardA.description,
   },
   {
-    id: "threats-blocked",
+    id: "severity-trends",
     row: 1,
-    title: "THREATS BLOCKED",
-    description:
-      "Stay informed with up-to-the-minute data interactions, preferences and trends across your whole infrastructure.",
+    title: HOME_CONTENT.insights.cardB.title,
+    description: HOME_CONTENT.insights.cardB.description,
   },
 
   // ROW 2
   {
-    id: "threat-categories",
+    id: "severity-breakdown",
     row: 2,
-    title: "THREAT CATEGORIES",
-    description:
-      "Identify and classify cyber threats using advanced behavioral analysis detection systems.",
+    title: HOME_CONTENT.insights.cardC.title,
+    description: HOME_CONTENT.insights.cardC.description,
   },
   {
-    id: "live-thread-feed",
+    id: "engagement-activity",
     row: 2,
-    title: "LIVE THREAD FEED",
-    description:
-      "Receive instant notifications and automated incident tracking to strengthen your security response",
+    title: HOME_CONTENT.insights.cardD.title,
+    description: HOME_CONTENT.insights.cardD.description,
   },
   {
-    id: "control-coverage",
+    id: "remediation-progress",
     row: 2,
-    title: "CONTROL COVERAGE",
-    description:
-      "Leverage AI features, insights, and efficiency to boost your security productivity.",
+    title: HOME_CONTENT.insights.cardE.title,
+    description: HOME_CONTENT.insights.cardE.description,
   },
 ];

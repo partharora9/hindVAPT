@@ -15,7 +15,7 @@ export function HudFlankLine({ direction = "left", isInView = true }: HudFlankLi
 
   return (
     <div
-      className={`relative h-[48px] sm:h-[54px] w-[140px] sm:w-[260px] md:w-[340px] lg:w-[420px] xl:w-[500px] overflow-visible pointer-events-none select-none ${
+      className={`relative h-[32px] sm:h-[54px] w-[70px] xs:w-[90px] sm:w-[260px] md:w-[340px] lg:w-[420px] xl:w-[500px] overflow-visible pointer-events-none select-none ${
         isRight ? "scale-x-[-1]" : ""
       }`}
       aria-hidden="true"

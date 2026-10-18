@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import {
   motion,
   useScroll,
@@ -12,21 +12,20 @@ import { HeroContent } from "./HeroContent";
 import { ShieldVisual } from "./ShieldVisual";
 import { CircuitTraces } from "./CircuitTraces";
 import { ParticleField } from "./ParticleField";
-import { FloatingBadgeCard } from "./FloatingBadgeCard";
 import { useMouseParallax } from "@/hooks/useMouseParallax";
-import { DELAYS, DURATIONS, EASINGS, dividerVariants } from "@/config/animation";
+import { useMotionGovernance } from "@/context/MotionContext";
+import { DURATIONS, dividerVariants } from "@/config/animation";
 import type { HeroProps } from "@/types";
 
 export function Hero({
-  showFloatingBadge = false,
   onCtaClick,
   onLearnMoreClick,
 }: HeroProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const shouldReduceMotion = useReducedMotion();
-  const [badgeVisible, setBadgeVisible] = useState(showFloatingBadge);
+  const { isTouch } = useMotionGovernance();
 
-  // Mouse Parallax & 3D Tilt hook
+  // Mouse Parallax & 3D Tilt hook (only active on non-touch fine pointers)
   const {
     tracesX,
     tracesY,
@@ -44,19 +43,20 @@ export function Hero({
     handleMouseLeave,
   } = useMouseParallax();
 
-  // Scroll Effects (useScroll + useTransform)
+  // Scroll Effects
   const { scrollY } = useScroll();
-  const heroContentY = useTransform(scrollY, [0, 400], [0, -60]);
-  const shieldScrollScale = useTransform(scrollY, [0, 500], [1, 0.75]);
-  const shieldScrollOpacity = useTransform(scrollY, [0, 500], [1, 0.2]);
+  const heroContentY = useTransform(scrollY, [0, 400], [0, -40]);
+  const shieldScrollScale = useTransform(scrollY, [0, 500], [1, 0.8]);
+  const shieldScrollOpacity = useTransform(scrollY, [0, 500], [1, 0.3]);
 
   return (
-    <div
+    <section
       ref={containerRef}
       id="home"
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      className="relative min-h-[907px] w-full bg-[#020617] overflow-hidden flex flex-col justify-between selection:bg-[#1E9BFF]/30 selection:text-white"
+      aria-label="Hero Overview"
+      onMouseMove={isTouch ? undefined : handleMouseMove}
+      onMouseLeave={isTouch ? undefined : handleMouseLeave}
+      className="relative min-h-[calc(100svh-104px)] [@media(max-height:500px)]:min-h-0 lg:min-h-[880px] w-full bg-[#020617] overflow-x-clip flex flex-col justify-between selection:bg-[#1E9BFF]/30 selection:text-white pt-[104px]"
     >
       {/* 1. BACKGROUND CYBER GRID & VIGNETTE (0.0s fade in) */}
       <motion.div
@@ -75,54 +75,29 @@ export function Hero({
       />
 
       {/* 2. TOP HAIRLINE HERO FRAME & L-SHAPED CORNER BRACKETS (0.0s) */}
-      <div className="absolute top-0 left-0 right-0 pointer-events-none z-30 px-4 sm:px-8 max-w-[1600px] mx-auto">
-        {/* Continuous 1px outer frame lines */}
+      <div className="absolute top-[104px] left-0 right-0 pointer-events-none z-30 px-4 sm:px-8 max-w-[1600px] mx-auto">
         <div className="absolute top-0 bottom-0 left-4 sm:left-8 w-[1px] bg-[rgba(30,155,255,0.15)]" />
         <div className="absolute top-0 bottom-0 right-4 sm:right-8 w-[1px] bg-[rgba(30,155,255,0.15)]" />
 
-        {/* Top-Left L-bracket */}
-        <div className="absolute top-3 left-4 sm:left-8 w-5 h-5">
-          <svg viewBox="0 0 20 20" fill="none" className="w-full h-full">
-            <motion.path
-              d="M 1 18 V 1 H 18"
-              stroke="#1E9BFF"
-              strokeWidth="1.5"
-              initial={shouldReduceMotion ? { pathLength: 1 } : { pathLength: 0 }}
-              animate={{ pathLength: 1 }}
-              transition={{
-                delay: DELAYS.frame,
-                duration: DURATIONS.bracketDraw,
-                ease: EASINGS.cyber,
-              }}
-            />
-          </svg>
+        {/* Top-Left Bracket */}
+        <div className="absolute top-0 left-4 sm:left-8 -translate-x-1/2 w-3.5 h-3.5 pointer-events-none">
+          <span className="absolute top-0 left-0 w-full h-[1.5px] bg-[#1E9BFF]" />
+          <span className="absolute top-0 left-0 w-[1.5px] h-full bg-[#1E9BFF]" />
         </div>
 
-        {/* Top-Right L-bracket */}
-        <div className="absolute top-3 right-4 sm:right-8 w-5 h-5">
-          <svg viewBox="0 0 20 20" fill="none" className="w-full h-full">
-            <motion.path
-              d="M 2 1 H 19 V 18"
-              stroke="#1E9BFF"
-              strokeWidth="1.5"
-              initial={shouldReduceMotion ? { pathLength: 1 } : { pathLength: 0 }}
-              animate={{ pathLength: 1 }}
-              transition={{
-                delay: DELAYS.frame,
-                duration: DURATIONS.bracketDraw,
-                ease: EASINGS.cyber,
-              }}
-            />
-          </svg>
+        {/* Top-Right Bracket */}
+        <div className="absolute top-0 right-4 sm:right-8 translate-x-1/2 w-3.5 h-3.5 pointer-events-none">
+          <span className="absolute top-0 right-0 w-full h-[1.5px] bg-[#1E9BFF]" />
+          <span className="absolute top-0 right-0 w-[1.5px] h-full bg-[#1E9BFF]" />
         </div>
       </div>
 
-      {/* 3. NAVBAR (~104px height) */}
+      {/* 3. NAVBAR (~104px height fixed header) */}
       <Navbar onStartTrial={onCtaClick} />
 
-      {/* 4. MAIN HERO 50/50 SPLIT CONTAINER */}
-      <main className="relative flex-1 max-w-[1600px] w-full mx-auto px-6 sm:px-10 lg:pl-[52px] lg:pr-6 flex flex-col justify-center">
-        {/* Hairline 1px Vertical Divider at 50% (desktop only: draws at 0.4s top to bottom, fades out at bottom edge before hatch band) */}
+      {/* 4. MAIN HERO CONTAINER */}
+      <div className="relative flex-1 max-w-[1600px] w-full mx-auto px-6 sm:px-10 lg:pl-[52px] lg:pr-6 flex flex-col justify-center my-auto py-8 lg:py-12">
+        {/* Hairline 1px Vertical Divider at 50% (desktop only) */}
         <motion.div
           variants={dividerVariants}
           initial="hidden"
@@ -132,8 +107,8 @@ export function Hero({
           aria-hidden="true"
         />
 
-        {/* Grid Split */}
-        <div className="relative w-full grid grid-cols-1 xl:grid-cols-2 items-center gap-8 lg:gap-12 min-h-[760px]">
+        {/* Responsive Grid Split (1 col on mobile, 2 cols on xl) */}
+        <div className="relative w-full grid grid-cols-1 xl:grid-cols-2 items-center gap-10 xl:gap-12 min-h-[580px] sm:min-h-[680px] xl:min-h-[760px]">
           {/* Left Column: Typography, HUD line, CTAs, Stats */}
           <motion.div
             style={shouldReduceMotion ? {} : { y: heroContentY }}
@@ -146,16 +121,10 @@ export function Hero({
           </motion.div>
 
           {/* Right Column: Visual layers (traces, rings, shield, particles) */}
-          <div className="relative w-full h-[520px] sm:h-[620px] xl:h-[760px] flex items-center justify-center overflow-visible">
-            {/* Visual background on medium screens if single column */}
-            <div className="absolute inset-0 block xl:block">
-              {/* Circuit traces descending from top & rising from bottom */}
+          <div className="relative w-full h-[420px] sm:h-[540px] xl:h-[760px] flex items-center justify-center overflow-visible max-w-[90vw] mx-auto">
+            <div className="absolute inset-0">
               <CircuitTraces xOffset={tracesX} yOffset={tracesY} />
-
-              {/* Glowing orbs & star-dust canvas field */}
               <ParticleField xOffset={orbsX} yOffset={orbsY} />
-
-              {/* Central Shield with Double Outline, Binary Rain & Orbit Rings */}
               <ShieldVisual
                 ringX={ringX}
                 ringY={ringY}
@@ -171,29 +140,7 @@ export function Hero({
             </div>
           </div>
         </div>
-      </main>
-
-      {/* 5. FLOATING HUD TOGGLE (allows user to preview with/without reference badge card) */}
-      <div className="fixed bottom-4 left-4 z-40">
-        <button
-          onClick={() => setBadgeVisible(!badgeVisible)}
-          className="px-3 py-1.5 bg-[#030919]/90 border border-[#1E9BFF]/30 text-[10px] uppercase tracking-wider text-[#8FA3C7] hover:text-[#1E9BFF] hover:border-[#1E9BFF] rounded-none transition-colors backdrop-blur-md cursor-pointer flex items-center gap-2"
-          aria-label="Toggle reference badge card"
-        >
-          <span
-            className={`w-1.5 h-1.5 rounded-full ${
-              badgeVisible ? "bg-[#1E9BFF] shadow-[0_0_6px_#1E9BFF]" : "bg-gray-600"
-            }`}
-          />
-          Reference Badge: {badgeVisible ? "ON" : "OFF"}
-        </button>
       </div>
-
-      {/* 6. OPTIONAL FLOATING BADGE CARD (Bottom-Right, Default OFF) */}
-      <FloatingBadgeCard
-        isVisible={badgeVisible}
-        onClose={() => setBadgeVisible(false)}
-      />
-    </div>
+    </section>
   );
 }

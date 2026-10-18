@@ -15,7 +15,6 @@ import { LinkColumn } from "./footer/LinkColumn";
 import { NewsletterForm } from "./footer/NewsletterForm";
 import { BottomBar } from "./footer/BottomBar";
 import { MAIN_PAGES_LINKS, UTILITY_PAGES_LINKS } from "./footer/footerData";
-import { FloatingBadgeCard } from "./FloatingBadgeCard";
 
 export interface FooterProps {
   id?: string;
@@ -26,7 +25,6 @@ export interface FooterProps {
 
 export function Footer({
   id = "footer",
-  showFloatingBadge = false,
   onSubscribe,
   className = "",
 }: FooterProps) {
@@ -36,7 +34,6 @@ export function Footer({
   // Entrance trigger at 20% in view (once)
   const inViewTrigger = useInView(footerRef, { amount: 0.2, once: true });
   const [hasEntered, setHasEntered] = useState(false);
-  const [badgeVisible, setBadgeVisible] = useState(showFloatingBadge);
 
   // Fallback: Ensure everything becomes visible after 1.2s even if observer doesn't trigger
   useEffect(() => {
@@ -84,25 +81,18 @@ export function Footer({
       {/* 3. MAIN CONTENT LAYER (z-10, sits cleanly above canvas, starts ~125px below top) */}
       <motion.div
         style={{ y: shouldReduceMotion ? 0 : contentParallaxY }}
-        className="relative z-10 w-full max-w-[1600px] mx-auto px-6 sm:px-10 lg:px-[57px] pt-[100px] sm:pt-[125px] flex flex-col justify-between"
+        className="relative z-10 w-full max-w-[1600px] mx-auto px-6 sm:px-10 lg:px-[57px] pt-[80px] sm:pt-[100px] lg:pt-[125px] flex flex-col justify-between"
       >
-        {/* 4-COLUMN RESPONSIVE GRID (x ≈ 57 / 697 / 946 / 1195) */}
-        {/* Desktop (>=1280px): 4 columns */}
-        {/* Tablet (768-1023px): 2 rows (Brand + Newsletter / Main + Utility) */}
-        {/* Mobile (<768px): single column stack */}
-        <div className="w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-[minmax(320px,560px)_250px_250px_360px] gap-12 sm:gap-14 lg:gap-8 xl:gap-0 justify-between items-start">
+        {/* RESPONSIVE LAYOUTS: */}
+        {/* A. DESKTOP (>=1024px / lg / xl): 4 columns */}
+        <div className="w-full hidden lg:grid lg:grid-cols-4 xl:grid-cols-[minmax(320px,560px)_250px_250px_360px] gap-8 xl:gap-0 justify-between items-start">
           {/* Column 1: Brand (~560px) */}
           <div className="xl:w-[560px] xl:pr-12">
             <BrandColumn isInView={isInView} />
           </div>
 
-          {/* Tablet Row 1 Right: Newsletter (on md: shown on top row right; on xl: moved to Col 4) */}
-          <div className="block xl:hidden md:order-2">
-            <NewsletterForm isInView={isInView} onSubscribe={onSubscribe} />
-          </div>
-
           {/* Column 2: Main pages (~250px) */}
-          <div className="md:order-3 xl:order-2 xl:w-[250px] xl:pl-3">
+          <div className="xl:w-[250px] xl:pl-3">
             <LinkColumn
               title="Main pages"
               tagWidth="w-[135px]"
@@ -113,7 +103,7 @@ export function Footer({
           </div>
 
           {/* Column 3: Utility pages (~250px) */}
-          <div className="md:order-4 xl:order-3 xl:w-[250px] xl:pl-3">
+          <div className="xl:w-[250px] xl:pl-3">
             <LinkColumn
               title="Utility pages"
               tagWidth="w-[166px]"
@@ -123,23 +113,83 @@ export function Footer({
             />
           </div>
 
-          {/* Column 4: Newsletter (~360px, right-aligned, desktop only position) */}
-          <div className="hidden xl:flex xl:order-4 xl:w-[360px] justify-end">
+          {/* Column 4: Newsletter (~360px, right-aligned) */}
+          <div className="flex xl:w-[360px] justify-end">
             <NewsletterForm isInView={isInView} onSubscribe={onSubscribe} />
           </div>
         </div>
 
-        {/* 4. BOTTOM BAR (~40px above bottom edge) */}
-        <div className="w-full mt-16 sm:mt-24 lg:mt-28 border-t border-[rgba(30,155,255,0.08)]">
+        {/* B. TABLET (640px to 1023px): 2 columns (Brand + Newsletter, then Link columns) */}
+        <div className="w-full hidden sm:max-lg:grid sm:max-lg:grid-cols-2 gap-10 sm:gap-12 justify-between items-start">
+          {/* Row 1 Left: Brand */}
+          <div className="w-full">
+            <BrandColumn isInView={isInView} />
+          </div>
+
+          {/* Row 1 Right: Newsletter */}
+          <div className="w-full">
+            <NewsletterForm isInView={isInView} onSubscribe={onSubscribe} />
+          </div>
+
+          {/* Row 2 Left: Main pages */}
+          <div className="w-full">
+            <LinkColumn
+              title="Main pages"
+              tagWidth="w-[135px]"
+              links={MAIN_PAGES_LINKS}
+              isInView={isInView}
+              columnDelay={0.4}
+            />
+          </div>
+
+          {/* Row 2 Right: Utility pages */}
+          <div className="w-full">
+            <LinkColumn
+              title="Utility pages"
+              tagWidth="w-[166px]"
+              links={UTILITY_PAGES_LINKS}
+              isInView={isInView}
+              columnDelay={0.48}
+            />
+          </div>
+        </div>
+
+        {/* C. MOBILE (<640px): Single column stack (brand, newsletter, two link columns side by side) */}
+        <div className="w-full flex flex-col sm:hidden gap-10 items-start">
+          {/* 1. Brand & social buttons */}
+          <div className="w-full">
+            <BrandColumn isInView={isInView} />
+          </div>
+
+          {/* 2. Newsletter (full width) */}
+          <div className="w-full">
+            <NewsletterForm isInView={isInView} onSubscribe={onSubscribe} />
+          </div>
+
+          {/* 3. Two link columns side by side */}
+          <div className="grid grid-cols-2 gap-6 w-full">
+            <LinkColumn
+              title="Main pages"
+              tagWidth="w-[135px]"
+              links={MAIN_PAGES_LINKS}
+              isInView={isInView}
+              columnDelay={0.4}
+            />
+            <LinkColumn
+              title="Utility pages"
+              tagWidth="w-[166px]"
+              links={UTILITY_PAGES_LINKS}
+              isInView={isInView}
+              columnDelay={0.48}
+            />
+          </div>
+        </div>
+
+        {/* 4. BOTTOM BAR (~40px above bottom edge, centered on mobile) */}
+        <div className="w-full mt-12 sm:mt-20 lg:mt-28 border-t border-[rgba(30,155,255,0.08)]">
           <BottomBar isInView={isInView} />
         </div>
       </motion.div>
-
-      {/* 5. OPTIONAL FLOATING BADGE CARD (Default OFF) */}
-      <FloatingBadgeCard
-        isVisible={badgeVisible}
-        onClose={() => setBadgeVisible(false)}
-      />
     </footer>
   );
 }

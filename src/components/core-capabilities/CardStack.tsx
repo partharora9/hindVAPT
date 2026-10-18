@@ -10,45 +10,31 @@ import {
 } from "framer-motion";
 import { FeatureCard, CapabilityCardData } from "./FeatureCard";
 import { StepIndicator } from "./StepIndicator";
+import { HOME_CONTENT } from "@/content/home";
 
 export const CAPABILITY_CARDS: CapabilityCardData[] = [
   {
-    id: "card-detection",
+    id: "card-vulnerability-assessment",
     badgeType: "browser-shield",
-    titleLines: ["REAL-TIME THREAT", "DETECTION"],
-    paragraph:
-      "Monitor every packet, every request, every login across your entire infrastructure. Our AI engine correlates events surface real threats — not noise.",
-    bullets: [
-      "Sub-200ms detection and response",
-      "99.9% accuracy — near-zero false positives",
-      "Unified visibility across cloud, endpoint and network",
-    ],
+    titleLines: HOME_CONTENT.capabilities.cards[0].titleLines,
+    paragraph: HOME_CONTENT.capabilities.cards[0].paragraph,
+    bullets: HOME_CONTENT.capabilities.cards[0].bullets,
     mockType: "detection",
   },
   {
-    id: "card-response",
+    id: "card-penetration-testing",
     badgeType: "lightning-shield",
-    titleLines: ["AUTOMATED INCIDENT", "RESPONSE"],
-    paragraph:
-      "Execute autonomous containment playbooks in milliseconds. Neutralize compromised credentials, isolate breached workloads, and roll back malicious actions with zero human delay.",
-    bullets: [
-      "Sub-second autonomous containment",
-      "Custom trigger-action playbook chains",
-      "One-click cryptographic state rollback",
-    ],
+    titleLines: HOME_CONTENT.capabilities.cards[1].titleLines,
+    paragraph: HOME_CONTENT.capabilities.cards[1].paragraph,
+    bullets: HOME_CONTENT.capabilities.cards[1].bullets,
     mockType: "response",
   },
   {
-    id: "card-exposure",
+    id: "card-red-team",
     badgeType: "network-shield",
-    titleLines: ["UNIFIED ATTACK", "SURFACE"],
-    paragraph:
-      "Continuous graph mapping of your external perimeter, cloud workloads, and third-party SaaS connections. Pinpoint toxic combinations and critical attack paths before adversaries exploit them.",
-    bullets: [
-      "Real-time shadow asset discovery",
-      "Contextual exposure risk scoring",
-      "Continuous compliance & MITRE mapping",
-    ],
+    titleLines: HOME_CONTENT.capabilities.cards[2].titleLines,
+    paragraph: HOME_CONTENT.capabilities.cards[2].paragraph,
+    bullets: HOME_CONTENT.capabilities.cards[2].bullets,
     mockType: "exposure",
   },
 ];
@@ -104,7 +90,7 @@ function PerCardItem({
       className="sticky flex items-start justify-center"
       style={{
         top: navHeight,
-        height: `calc(100vh - ${navHeight}px)`,
+        height: `calc(100svh - ${navHeight}px)`,
         zIndex: index + 1,
       }}
     >
@@ -115,7 +101,7 @@ function PerCardItem({
           scale: shouldReduceMotion || isLast ? 1 : scale,
           filter: shouldReduceMotion || isLast ? "none" : filter,
           zIndex: index + 1,
-          height: `calc(100vh - ${navHeight}px - ${total * peek}px - 24px)`,
+          height: `calc(100svh - ${navHeight}px - ${total * peek}px - 24px)`,
           minHeight: 580,
           maxHeight: 740,
         }}

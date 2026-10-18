@@ -20,20 +20,20 @@ interface BrandColumnProps {
 export function BrandColumn({ isInView = true }: BrandColumnProps) {
   const shouldReduceMotion = useReducedMotion();
 
-  // Tagline 3-line scramble decodes
-  const line1 = useScramble("we help businesses stay", {
+  // Tagline 3-line scramble decodes: "we help businesses find and fix security weaknesses before attackers do."
+  const line1 = useScramble("we help businesses find and", {
     durationMs: 650,
     delayMs: 200,
     autoStart: isInView,
   });
 
-  const line2 = useScramble("protected in an increasingly", {
+  const line2 = useScramble("fix security weaknesses", {
     durationMs: 750,
     delayMs: 350,
     autoStart: isInView,
   });
 
-  const line3 = useScramble("connected world.", {
+  const line3 = useScramble("before attackers do.", {
     durationMs: 600,
     delayMs: 500,
     autoStart: isInView,
@@ -118,7 +118,7 @@ export function BrandColumn({ isInView = true }: BrandColumnProps) {
             transition={{ duration: 0.6, delay: 0.25, ease: EASINGS.cyber }}
             className="block"
           >
-            {line1 || "we help businesses stay"}
+            {line1 || "we help businesses find and"}
           </motion.span>
           <motion.span
             initial={shouldReduceMotion ? { opacity: 1, filter: "blur(0px)" } : { opacity: 0, filter: "blur(4px)" }}
@@ -126,7 +126,7 @@ export function BrandColumn({ isInView = true }: BrandColumnProps) {
             transition={{ duration: 0.6, delay: 0.38, ease: EASINGS.cyber }}
             className="block"
           >
-            {line2 || "protected in an increasingly"}
+            {line2 || "fix security weaknesses"}
           </motion.span>
           <motion.span
             initial={shouldReduceMotion ? { opacity: 1, filter: "blur(0px)" } : { opacity: 0, filter: "blur(4px)" }}
@@ -134,7 +134,7 @@ export function BrandColumn({ isInView = true }: BrandColumnProps) {
             transition={{ duration: 0.6, delay: 0.52, ease: EASINGS.cyber }}
             className="block"
           >
-            {line3 || "connected world."}
+            {line3 || "before attackers do."}
           </motion.span>
         </p>
       </div>

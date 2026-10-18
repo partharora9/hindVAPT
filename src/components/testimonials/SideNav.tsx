@@ -18,7 +18,7 @@ export function SideNav({ onPrev, onNext, isInView = true }: SideNavProps) {
 
   return (
     <div
-      className="relative w-full lg:w-[250px] h-[140px] sm:h-[160px] lg:h-[640px] flex flex-row lg:flex-col select-none overflow-hidden"
+      className="relative w-full max-w-[644px] lg:max-w-none lg:w-[250px] h-[56px] sm:h-[64px] lg:h-[640px] flex flex-row lg:flex-col select-none overflow-hidden"
       style={{
         background: "linear-gradient(180deg, #031024 0%, #04122A 100%)",
       }}

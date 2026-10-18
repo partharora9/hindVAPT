@@ -7,9 +7,17 @@ interface MagnifierLensProps {
   className?: string;
   parallaxX?: number;
   parallaxY?: number;
+  isParentHovered?: boolean;
+  focalText?: string;
 }
 
-export function MagnifierLens({ className = "", parallaxX = 0, parallaxY = 0 }: MagnifierLensProps) {
+export function MagnifierLens({
+  className = "",
+  parallaxX = 0,
+  parallaxY = 0,
+  isParentHovered,
+  focalText,
+}: MagnifierLensProps) {
   const shouldReduceMotion = useReducedMotion();
 
   return (

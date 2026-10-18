@@ -1,12 +1,12 @@
 "use client";
 
 import React from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion, type MotionValue } from "framer-motion";
 import { DELAYS, EASINGS } from "@/config/animation";
 
 interface CircuitTracesProps {
-  xOffset?: any;
-  yOffset?: any;
+  xOffset?: MotionValue<number> | number;
+  yOffset?: MotionValue<number> | number;
 }
 
 export function CircuitTraces({ xOffset, yOffset }: CircuitTracesProps) {

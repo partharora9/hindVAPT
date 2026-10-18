@@ -64,14 +64,14 @@ export function ServiceCell({ item, index, isInView = true }: ServiceCellProps) 
   const activeHover = isHovered || isFocused;
   const { IconComponent } = item;
 
-  // Grid border classes based on 3x3 layout
-  // Column 0, 1 have border-r; Row 0, 1 have border-b
+  // Grid border classes based on 3x3 (desktop >=1024), 2-col (640-1023), and 1-col (<640)
   const borderClasses = `
-    ${item.col < 2 ? "lg:border-r" : ""}
-    ${item.row < 2 ? "lg:border-b" : ""}
-    ${index % 2 === 0 ? "md:max-lg:border-r" : ""}
-    ${index < 8 ? "md:max-lg:border-b" : ""}
-    max-md:border-b last:border-b-0
+    ${item.col < 2 ? "lg:border-r" : "lg:border-r-0"}
+    ${item.row < 2 ? "lg:border-b" : "lg:border-b-0"}
+    ${index % 2 === 0 ? "sm:max-lg:border-r" : "sm:max-lg:border-r-0"}
+    ${index < 8 ? "sm:max-lg:border-b" : "sm:max-lg:border-b-0"}
+    ${index === 8 ? "sm:max-lg:border-r-0" : ""}
+    max-sm:border-b max-sm:border-r-0 last:border-b-0
     border-[rgba(150,170,230,0.28)]
   `;
 

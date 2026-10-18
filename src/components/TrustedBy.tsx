@@ -3,264 +3,229 @@
 import React, { useRef, useState, useEffect } from "react";
 import {
   motion,
-  useInView,
   useScroll,
   useTransform,
   useVelocity,
   useReducedMotion,
 } from "framer-motion";
 import { useScramble } from "@/hooks/useScramble";
+import { useGuaranteedInView } from "@/hooks/useGuaranteedInView";
+import { useMotionGovernance } from "@/context/MotionContext";
 import { EASINGS } from "@/config/animation";
+import { HOME_CONTENT } from "@/content/home";
 
-// 8 Distinct High-Tech Corporate / Security Logos matching reference screenshot
-function Logo1() {
+// 8 Distinct Stylised Security Framework Wordmarks (typographic, non-official marks)
+function OwaspMark() {
   return (
-    <svg viewBox="0 0 155 32" fill="none" className="h-6 sm:h-7 w-auto select-none" aria-label="Logoipsum security">
+    <svg viewBox="0 0 160 36" fill="none" className="h-6 sm:h-7 w-auto select-none" aria-label="OWASP Testing Framework">
       <g className="transition-transform duration-300 group-hover:scale-105">
-        <path
-          d="M 16 3 C 22 3 28 5 28 9 C 28 20 22 26 16 29 C 10 26 4 20 4 9 C 4 5 10 3 16 3 Z"
-          fill="currentColor"
-          fillOpacity="0.2"
-          stroke="currentColor"
-          strokeWidth="1.6"
-        />
-        <path
-          d="M 16 8 L 17.5 13.5 L 23 15 L 17.5 16.5 L 16 22 L 14.5 16.5 L 9 15 L 14.5 13.5 Z"
-          fill="currentColor"
-        />
+        <rect x="4" y="6" width="22" height="24" rx="2" stroke="currentColor" strokeWidth="1.5" strokeOpacity="0.7" />
+        <path d="M8 12 L15 18 L8 24" stroke="#1E9BFF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+        <line x1="16" y1="24" x2="22" y2="24" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
       </g>
       <text
         x="36"
-        y="21"
+        y="23"
         fill="currentColor"
         fontFamily="var(--font-mono), monospace"
-        fontWeight="700"
-        fontSize="15"
-        letterSpacing="-0.02em"
+        fontWeight="800"
+        fontSize="16"
+        letterSpacing="0.1em"
       >
-        Logoipsum
+        OWASP
       </text>
     </svg>
   );
 }
 
-function Logo2() {
+function NistMark() {
   return (
-    <svg viewBox="0 0 155 32" fill="none" className="h-6 sm:h-7 w-auto select-none" aria-label="logoipsum systems">
+    <svg viewBox="0 0 160 36" fill="none" className="h-6 sm:h-7 w-auto select-none" aria-label="NIST Cybersecurity Framework">
       <g className="transition-transform duration-300 group-hover:scale-105">
-        <rect x="4" y="5" width="22" height="22" rx="4" stroke="currentColor" strokeWidth="1.8" />
-        <path
-          d="M 4 5 H 15 C 21 5 26 10 26 16 C 26 22 21 27 15 27 H 4 V 5 Z"
-          fill="currentColor"
-          fillOpacity="0.25"
-        />
-        <circle cx="15" cy="16" r="3.5" fill="currentColor" />
+        <circle cx="15" cy="18" r="10" stroke="currentColor" strokeWidth="1.5" strokeOpacity="0.7" />
+        <circle cx="15" cy="18" r="4" fill="#1E9BFF" fillOpacity="0.3" stroke="#1E9BFF" strokeWidth="1.2" />
+        <line x1="15" y1="4" x2="15" y2="8" stroke="currentColor" strokeWidth="1.4" />
+        <line x1="15" y1="28" x2="15" y2="32" stroke="currentColor" strokeWidth="1.4" />
       </g>
       <text
         x="36"
-        y="21"
+        y="23"
         fill="currentColor"
         fontFamily="var(--font-mono), monospace"
-        fontWeight="700"
-        fontSize="15"
-        letterSpacing="-0.02em"
+        fontWeight="800"
+        fontSize="16"
+        letterSpacing="0.12em"
       >
-        logoipsum
+        NIST
       </text>
     </svg>
   );
 }
 
-function Logo3() {
+function MitreMark() {
   return (
-    <svg viewBox="0 0 155 32" fill="none" className="h-6 sm:h-7 w-auto select-none" aria-label="Logoipsum defense">
+    <svg viewBox="0 0 180 36" fill="none" className="h-6 sm:h-7 w-auto select-none" aria-label="MITRE ATT&CK Framework">
       <g className="transition-transform duration-300 group-hover:scale-105">
-        <path
-          d="M 16 3 L 26 8.5 V 23.5 L 16 29 L 6 23.5 V 8.5 Z"
-          stroke="currentColor"
-          strokeWidth="1.8"
-          fill="currentColor"
-          fillOpacity="0.18"
-        />
-        <circle cx="16" cy="16" r="3" fill="currentColor" />
-        <line x1="16" y1="3" x2="16" y2="8" stroke="currentColor" strokeWidth="1.5" />
-        <line x1="16" y1="24" x2="16" y2="29" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M 6 26 L 15 10 L 24 26" stroke="#1E9BFF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+        <line x1="10" y1="20" x2="20" y2="20" stroke="currentColor" strokeWidth="1.4" />
+      </g>
+      <text
+        x="34"
+        y="23"
+        fill="currentColor"
+        fontFamily="var(--font-mono), monospace"
+        fontWeight="800"
+        fontSize="15"
+        letterSpacing="0.08em"
+      >
+        MITRE ATT&CK
+      </text>
+    </svg>
+  );
+}
+
+function IsoMark() {
+  return (
+    <svg viewBox="0 0 160 36" fill="none" className="h-6 sm:h-7 w-auto select-none" aria-label="ISO 27001 Security Standard">
+      <g className="transition-transform duration-300 group-hover:scale-105">
+        <path d="M 15 6 L 25 10 V 21 C 25 26 15 30 15 30 C 15 30 5 26 5 21 V 10 Z" stroke="currentColor" strokeWidth="1.5" strokeOpacity="0.7" fill="#1E9BFF" fillOpacity="0.15" />
+        <path d="M 10 18 L 14 21 L 20 14" stroke="#1E9BFF" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
       </g>
       <text
         x="36"
-        y="21"
+        y="23"
         fill="currentColor"
         fontFamily="var(--font-mono), monospace"
-        fontWeight="700"
+        fontWeight="800"
         fontSize="15"
-        letterSpacing="-0.02em"
+        letterSpacing="0.08em"
       >
-        Logoipsum
+        ISO 27001
       </text>
     </svg>
   );
 }
 
-function Logo4() {
+function PciMark() {
   return (
-    <svg viewBox="0 0 155 32" fill="none" className="h-6 sm:h-7 w-auto select-none" aria-label="logo ipsum global">
-      <text
-        x="2"
-        y="21"
-        fill="currentColor"
-        fontFamily="var(--font-mono), monospace"
-        fontWeight="700"
-        fontSize="14"
-        letterSpacing="-0.02em"
-      >
-        logo
-      </text>
-      <g className="transition-transform duration-500 group-hover:rotate-45" transform="translate(43, 5)">
-        <circle cx="11" cy="11" r="10" stroke="currentColor" strokeWidth="1.4" />
-        <ellipse cx="11" cy="11" rx="4.5" ry="10" stroke="currentColor" strokeWidth="1.2" strokeDasharray="2 1" />
-        <line x1="1" y1="11" x2="21" y2="11" stroke="currentColor" strokeWidth="1.2" />
-        <line x1="11" y1="1" x2="11" y2="21" stroke="currentColor" strokeWidth="1.2" />
-      </g>
-      <text
-        x="72"
-        y="21"
-        fill="currentColor"
-        fontFamily="var(--font-mono), monospace"
-        fontWeight="700"
-        fontSize="14"
-        letterSpacing="-0.02em"
-      >
-        ipsum
-      </text>
-    </svg>
-  );
-}
-
-function Logo5() {
-  return (
-    <svg viewBox="0 0 155 32" fill="none" className="h-6 sm:h-7 w-auto select-none" aria-label="Logoipsum orbit">
+    <svg viewBox="0 0 160 36" fill="none" className="h-6 sm:h-7 w-auto select-none" aria-label="PCI DSS Security Standard">
       <g className="transition-transform duration-300 group-hover:scale-105">
-        <path
-          d="M 6 22 C 12 22 26 18 26 8 C 26 4 21 4 16 7 C 9 11 5 18 5 22 Z"
-          fill="currentColor"
-          fillOpacity="0.25"
-          stroke="currentColor"
-          strokeWidth="1.6"
-        />
-        <circle cx="24" cy="22" r="2.5" fill="currentColor" />
+        <rect x="5" y="9" width="22" height="18" rx="3" stroke="currentColor" strokeWidth="1.5" strokeOpacity="0.7" />
+        <line x1="5" y1="14" x2="27" y2="14" stroke="#1E9BFF" strokeWidth="1.5" />
+        <rect x="9" y="19" width="5" height="4" rx="1" fill="#1E9BFF" />
       </g>
       <text
         x="36"
-        y="21"
+        y="23"
         fill="currentColor"
-        fontStyle="italic"
         fontFamily="var(--font-mono), monospace"
-        fontWeight="700"
+        fontWeight="800"
         fontSize="15"
-        letterSpacing="-0.01em"
+        letterSpacing="0.08em"
       >
-        Logoipsum
+        PCI DSS
       </text>
     </svg>
   );
 }
 
-function Logo6() {
+function Soc2Mark() {
   return (
-    <svg viewBox="0 0 155 32" fill="none" className="h-6 sm:h-7 w-auto select-none" aria-label="Logoipsum shield">
+    <svg viewBox="0 0 160 36" fill="none" className="h-6 sm:h-7 w-auto select-none" aria-label="SOC 2 Type II Security Standard">
       <g className="transition-transform duration-300 group-hover:scale-105">
-        <path
-          d="M 6 6 L 16 3 L 26 6 V 17 C 26 23 21 27 16 29 C 11 27 6 23 6 17 Z"
-          stroke="currentColor"
-          strokeWidth="1.6"
-          fill="currentColor"
-          fillOpacity="0.2"
-        />
-        <circle cx="16" cy="14" r="3" fill="currentColor" />
-        <path d="M 16 9 V 19 M 11 14 H 21" stroke="currentColor" strokeWidth="1.2" />
+        <circle cx="12" cy="18" r="8" stroke="currentColor" strokeWidth="1.4" strokeOpacity="0.6" />
+        <circle cx="18" cy="18" r="8" stroke="#1E9BFF" strokeWidth="1.6" />
+        <circle cx="15" cy="18" r="2.5" fill="#1E9BFF" />
       </g>
       <text
         x="36"
-        y="21"
+        y="23"
         fill="currentColor"
         fontFamily="var(--font-mono), monospace"
-        fontWeight="700"
+        fontWeight="800"
         fontSize="15"
-        letterSpacing="-0.02em"
+        letterSpacing="0.1em"
       >
-        Logoipsum
+        SOC 2
       </text>
     </svg>
   );
 }
 
-function Logo7() {
+function CvssMark() {
   return (
-    <svg viewBox="0 0 155 32" fill="none" className="h-6 sm:h-7 w-auto select-none" aria-label="logoipsum node">
+    <svg viewBox="0 0 160 36" fill="none" className="h-6 sm:h-7 w-auto select-none" aria-label="CVSS Vulnerability Scoring">
       <g className="transition-transform duration-300 group-hover:scale-105">
-        <rect x="5" y="6" width="22" height="20" rx="6" stroke="currentColor" strokeWidth="1.6" fill="currentColor" fillOpacity="0.15" />
-        <path d="M 12 6 C 18 6 21 11 21 16 C 21 21 18 26 12 26" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+        <rect x="5" y="8" width="20" height="20" rx="3" stroke="currentColor" strokeWidth="1.4" strokeOpacity="0.7" />
+        <line x1="9" y1="21" x2="9" y2="18" stroke="#1E9BFF" strokeWidth="2" strokeLinecap="round" />
+        <line x1="15" y1="21" x2="15" y2="14" stroke="#1E9BFF" strokeWidth="2" strokeLinecap="round" />
+        <line x1="21" y1="21" x2="21" y2="11" stroke="#FF4C68" strokeWidth="2" strokeLinecap="round" />
       </g>
       <text
         x="36"
-        y="21"
+        y="23"
         fill="currentColor"
         fontFamily="var(--font-mono), monospace"
-        fontWeight="700"
-        fontSize="15"
-        letterSpacing="-0.02em"
+        fontWeight="800"
+        fontSize="16"
+        letterSpacing="0.12em"
       >
-        logoipsum
+        CVSS v3.1
       </text>
     </svg>
   );
 }
 
-function Logo8() {
+function PtesMark() {
   return (
-    <svg viewBox="0 0 155 32" fill="none" className="h-6 sm:h-7 w-auto select-none" aria-label="Logoipsum vault">
+    <svg viewBox="0 0 160 36" fill="none" className="h-6 sm:h-7 w-auto select-none" aria-label="PTES Penetration Testing Standard">
       <g className="transition-transform duration-300 group-hover:scale-105">
-        <polygon points="16,4 26,14 16,24 6,14" stroke="currentColor" strokeWidth="1.6" fill="currentColor" fillOpacity="0.2" />
-        <circle cx="16" cy="14" r="2.5" fill="currentColor" />
+        <circle cx="15" cy="18" r="10" stroke="currentColor" strokeWidth="1.4" strokeOpacity="0.7" />
+        <path d="M 11 18 L 19 18 M 16 14 L 20 18 L 16 22" stroke="#1E9BFF" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
       </g>
       <text
         x="36"
-        y="21"
+        y="23"
         fill="currentColor"
         fontFamily="var(--font-mono), monospace"
-        fontWeight="700"
-        fontSize="15"
-        letterSpacing="-0.02em"
+        fontWeight="800"
+        fontSize="16"
+        letterSpacing="0.12em"
       >
-        Logoipsum
+        PTES
       </text>
     </svg>
   );
 }
 
-const LOGO_COMPONENTS = [
-  Logo1,
-  Logo2,
-  Logo3,
-  Logo4,
-  Logo5,
-  Logo6,
-  Logo7,
-  Logo8,
+const STANDARDS_WORDMARKS = [
+  OwaspMark,
+  NistMark,
+  MitreMark,
+  IsoMark,
+  PciMark,
+  Soc2Mark,
+  CvssMark,
+  PtesMark,
 ];
 
 interface TrustedByProps {
   id?: string;
+  clientLogosMode?: boolean;
 }
 
-export function TrustedBy({ id = "trusted-by" }: TrustedByProps) {
+export function TrustedBy({
+  id = "trusted-by",
+  clientLogosMode = false,
+}: TrustedByProps) {
   const sectionRef = useRef<HTMLElement | null>(null);
   const trackRef = useRef<HTMLDivElement | null>(null);
   const shouldReduceMotion = useReducedMotion();
+  const { isTouch } = useMotionGovernance();
   const [isHovered, setIsHovered] = useState(false);
 
-  // Entrance trigger when section is ~25% in view (once)
-  const isInView = useInView(sectionRef, { amount: 0.25, once: true });
+  // Entrance trigger when section is ~25% in view (with guaranteed 1.2s fallback)
+  const isInView = useGuaranteedInView(sectionRef, { amount: 0.25, fallbackMs: 1200 });
 
   // Scroll parallax mapping
   const { scrollY, scrollYProgress } = useScroll({
@@ -275,36 +240,36 @@ export function TrustedBy({ id = "trusted-by" }: TrustedByProps) {
   const marqueeY = useTransform(scrollYProgress, [0, 1], [-12, 12]);
 
   // Decode scramble effect on header label triggered on entrance
-  const scrambledLabel = useScramble("TRUSTED BY SECURITY TEAMS AT", {
+  const scrambledLabel = useScramble(HOME_CONTENT.standards.label, {
     durationMs: 750,
     delayMs: 200,
     autoStart: isInView,
   });
 
-  // Smooth physical marquee ticker with scroll-velocity boost
+  // Smooth physical marquee ticker with scroll-velocity boost & responsive speed
   useEffect(() => {
     if (shouldReduceMotion) return;
 
     let animationFrameId: number;
     let xOffset = 0;
-    const baseSpeed = 0.75; // pixels per frame at 60fps
+    const isSmall = typeof window !== "undefined" && window.innerWidth < 768;
+    const baseSpeed = isSmall ? 0.42 : 0.75; // ~25px/s on mobile, 45px/s on desktop
     let currentSpeed = baseSpeed;
 
-    // Width of 1 complete set: 8 logos * 224px = 1792px
-    const cardWidth = 224;
-    const singleSetWidth = LOGO_COMPONENTS.length * cardWidth;
+    // Card width per screen tier
+    const cardWidth = isSmall ? 140 : 224;
+    const singleSetWidth = STANDARDS_WORDMARKS.length * cardWidth;
 
     const tick = () => {
       const vel = Math.abs(scrollVelocity.get() || 0);
 
-      // Boost speed when scrolling through section, then ease back
       let targetSpeed = baseSpeed;
       if (vel > 12 && isInView) {
-        targetSpeed = baseSpeed + Math.min(2.8, vel * 0.0018);
+        targetSpeed = baseSpeed + Math.min(2.5, vel * 0.0018);
       }
 
-      if (isHovered) {
-        targetSpeed = 0.15; // Slow down gently on hover
+      if (isHovered && !isTouch) {
+        targetSpeed = 0.15; // Slow down gently on hover on mouse devices
       }
 
       // Smooth exponential decay back to base speed
@@ -327,17 +292,17 @@ export function TrustedBy({ id = "trusted-by" }: TrustedByProps) {
     return () => {
       cancelAnimationFrame(animationFrameId);
     };
-  }, [isInView, isHovered, shouldReduceMotion, scrollVelocity]);
+  }, [isInView, isHovered, shouldReduceMotion, scrollVelocity, isTouch]);
 
-  // 3 identical sets of 8 logos to guarantee seamless continuous scroll
+  // 3 identical sets to guarantee seamless continuous scroll
   const logoSets = [0, 1, 2];
 
   return (
     <section
       ref={sectionRef}
       id={id}
-      className="relative w-full bg-[#020617] overflow-hidden select-none"
-      aria-label="Trusted By Security Teams"
+      className="relative w-full bg-[#020617] overflow-x-clip select-none"
+      aria-label="Security Standards & Frameworks"
     >
       {/* Continuity: Shared background cyber grid and vignette */}
       <div className="absolute inset-0 cyber-grid pointer-events-none -z-20" aria-hidden="true" />
@@ -355,7 +320,7 @@ export function TrustedBy({ id = "trusted-by" }: TrustedByProps) {
         <div className="absolute bottom-0 right-4 sm:right-8 translate-x-1/2 w-2 h-2 border-b border-l border-[#1E9BFF]/60" />
       </div>
 
-      {/* Boundary 1px Accent-Blue Light Line Sweep (sweeps left to right along boundary once on entry) */}
+      {/* Boundary 1px Accent-Blue Light Line Sweep */}
       <div className="absolute top-0 left-0 right-0 h-[1.5px] overflow-hidden pointer-events-none z-40">
         <div className="absolute inset-0 bg-[rgba(30,155,255,0.2)]" />
         <motion.div
@@ -415,10 +380,10 @@ export function TrustedBy({ id = "trusted-by" }: TrustedByProps) {
           >
             {logoSets.map((setIdx) => (
               <div key={setIdx} className="flex items-center">
-                {LOGO_COMPONENTS.map((LogoComp, logoIdx) => (
+                {STANDARDS_WORDMARKS.map((LogoComp, logoIdx) => (
                   <div
                     key={`${setIdx}-${logoIdx}`}
-                    className="relative flex-shrink-0 w-[200px] sm:w-[224px] h-[92px] sm:h-[102px] flex items-center justify-center px-6 border-r border-[rgba(30,155,255,0.12)] bg-[#030919]/50 hover:bg-[#07112c]/65 transition-colors duration-200 group cursor-pointer"
+                    className="relative flex-shrink-0 w-[140px] xs:w-[160px] sm:w-[190px] xl:w-[224px] h-[76px] sm:h-[88px] xl:h-[102px] flex items-center justify-center px-4 sm:px-6 border-r border-[rgba(30,155,255,0.12)] bg-[#030919]/50 hover:bg-[#07112c]/65 transition-colors duration-200 group cursor-pointer"
                   >
                     {/* Top Crosshair Junction Tick (┬) */}
                     <div className="absolute -top-[5px] -right-[5px] w-[10px] h-[10px] pointer-events-none z-10 flex items-center justify-center">
@@ -433,13 +398,9 @@ export function TrustedBy({ id = "trusted-by" }: TrustedByProps) {
                     </div>
 
                     {/* Inner CAD Corner Brackets (┌ ┐ └ ┘) */}
-                    {/* Top-Left ┌ */}
                     <div className="absolute top-2.5 left-2.5 w-2 h-2 border-t border-l border-[#1E9BFF]/30 group-hover:border-[#1E9BFF] transition-colors duration-200" />
-                    {/* Top-Right ┐ */}
                     <div className="absolute top-2.5 right-2.5 w-2 h-2 border-t border-r border-[#1E9BFF]/30 group-hover:border-[#1E9BFF] transition-colors duration-200" />
-                    {/* Bottom-Left └ */}
                     <div className="absolute bottom-2.5 left-2.5 w-2 h-2 border-b border-l border-[#1E9BFF]/30 group-hover:border-[#1E9BFF] transition-colors duration-200" />
-                    {/* Bottom-Right ┘ */}
                     <div className="absolute bottom-2.5 right-2.5 w-2 h-2 border-b border-r border-[#1E9BFF]/30 group-hover:border-[#1E9BFF] transition-colors duration-200" />
 
                     {/* Logo Visual with Cyber Cyan Glow on Hover */}

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import {
   motion,
   useInView,
@@ -10,7 +10,6 @@ import {
 } from "framer-motion";
 import { ServicesHeader } from "./services/ServicesHeader";
 import { ServicesGrid } from "./services/ServicesGrid";
-import { FloatingBadgeCard } from "./FloatingBadgeCard";
 import { EASINGS } from "@/config/animation";
 
 interface ServicesProps {
@@ -20,11 +19,9 @@ interface ServicesProps {
 
 export function Services({
   id = "services",
-  showFloatingBadge = false,
 }: ServicesProps) {
   const sectionRef = useRef<HTMLElement | null>(null);
   const shouldReduceMotion = useReducedMotion();
-  const [badgeVisible, setBadgeVisible] = useState(showFloatingBadge);
 
   // Entrance trigger when section is ~25% in view (once)
   const isInView = useInView(sectionRef, { amount: 0.25, once: true });
@@ -42,7 +39,7 @@ export function Services({
     <section
       ref={sectionRef}
       id={id}
-      className="relative w-full bg-gradient-to-b from-[#020617] via-[#020617] to-[#030818] text-[#C3D4FF] select-none pt-20 sm:pt-28 pb-16 lg:pb-24 border-b border-[rgba(30,155,255,0.15)]"
+      className="content-auto relative w-full bg-gradient-to-b from-[#020617] via-[#020617] to-[#030818] text-[#C3D4FF] select-none pt-20 sm:pt-28 pb-16 lg:pb-24 border-b border-[rgba(30,155,255,0.15)]"
       aria-label="Services: End-To-End Protection Against Cyber Threats"
     >
       {/* 1. SEAMLESS BACKGROUND GRID & VIGNETTE CONTINUITY */}
@@ -117,12 +114,6 @@ export function Services({
           aria-hidden="true"
         />
       </div>
-
-      {/* 4. Optional Floating Badge Card (Default OFF) */}
-      <FloatingBadgeCard
-        isVisible={badgeVisible}
-        onClose={() => setBadgeVisible(false)}
-      />
     </section>
   );
 }

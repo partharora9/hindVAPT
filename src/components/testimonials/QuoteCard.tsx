@@ -56,7 +56,7 @@ export function QuoteCard({
       ref={cardRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="relative w-full max-w-[644px] h-[520px] sm:h-[600px] lg:h-[640px] bg-[#030818] border border-[rgba(30,155,255,0.18)] p-7 sm:p-11 lg:p-12 flex flex-col justify-between isolate select-none overflow-hidden shadow-[0_16px_50px_rgba(0,0,0,0.7)]"
+      className="relative w-full max-w-[644px] max-lg:h-auto min-h-[380px] h-[520px] sm:h-[600px] lg:h-[640px] bg-[#030818] border border-[rgba(30,155,255,0.18)] p-6 sm:p-11 lg:p-12 flex flex-col justify-between isolate select-none overflow-hidden shadow-[0_16px_50px_rgba(0,0,0,0.7)]"
       role="blockquote"
     >
       {/* 1. Corner Brackets (Top-Left and Top-Right ONLY as in reference) */}
@@ -73,6 +73,15 @@ export function QuoteCard({
           <path d="M 16 12 L 16 0 L 4 0" stroke="#1E9BFF" strokeWidth="1.5" />
         </svg>
       </div>
+
+      {/* Development Placeholder Ribbon */}
+      {!testimonial.isVerified && process.env.NODE_ENV !== "production" && (
+        <div className="absolute top-3 right-8 z-30">
+          <span className="font-mono text-[10px] sm:text-[11px] font-bold text-[#EAB308] bg-[#EAB308]/15 border border-[#EAB308]/40 px-2 py-0.5 rounded tracking-widest uppercase shadow-sm">
+            PLACEHOLDER · PENDING CLIENT SIGN-OFF
+          </span>
+        </div>
+      )}
 
       {/* 2. Diagonal Radial Glow from Top-Left and Faint Bottom-Right Glow */}
       <div
@@ -128,7 +137,7 @@ export function QuoteCard({
             duration: 0.6,
             ease: EASINGS.cyber,
           }}
-          className="font-mono text-[18px] sm:text-[21px] lg:text-[24px] font-medium text-[#C3D4FF] leading-[1.6] sm:leading-[38px] text-left max-w-[530px]"
+          className="font-mono text-[18px] sm:text-[21px] lg:text-[24px] font-medium text-[#C3D4FF] leading-[28px] sm:leading-[34px] lg:leading-[38px] text-left max-w-[530px]"
         >
           &ldquo;{decodedQuote}&rdquo;
         </motion.p>

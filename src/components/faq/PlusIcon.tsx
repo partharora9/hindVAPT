@@ -27,7 +27,7 @@ export function PlusIcon({
   const strokeColor = isOpen ? "#1E9BFF" : isHovered ? "#FFFFFF" : "rgba(213,226,255,0.85)";
 
   return (
-    <div className="relative w-[20px] h-[20px] flex items-center justify-center select-none pointer-events-none">
+    <div className="relative w-[18px] h-[18px] sm:w-[20px] sm:h-[20px] flex items-center justify-center select-none pointer-events-none">
       <motion.svg
         viewBox="0 0 20 20"
         fill="none"

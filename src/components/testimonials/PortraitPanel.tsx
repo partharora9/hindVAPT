@@ -58,7 +58,7 @@ export function PortraitPanel({
       ref={containerRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="relative w-full max-w-[524px] h-[520px] sm:h-[600px] lg:h-[640px] overflow-hidden isolate select-none bg-[#0A5CFF] shadow-[0_16px_50px_rgba(0,0,0,0.7)]"
+      className="relative w-full max-w-[524px] max-lg:aspect-[16/10] max-lg:h-auto h-[520px] sm:h-[600px] lg:h-[640px] overflow-hidden isolate select-none bg-[#0A5CFF] shadow-[0_16px_50px_rgba(0,0,0,0.7)]"
     >
       {/* 1. Wipe Entrance & Slide Transition Wrapper */}
       <motion.div
@@ -110,7 +110,6 @@ export function PortraitPanel({
             src={testimonial.imageSrc}
             alt={testimonial.imageAlt}
             fill
-            priority
             sizes="(max-width: 1024px) 100vw, 524px"
             className="object-cover object-top"
           />

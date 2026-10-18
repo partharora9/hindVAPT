@@ -35,17 +35,15 @@ export function useCountUp({
 
   useEffect(() => {
     if (shouldReduceMotion) {
-      setCurrentValue(to);
       isCompleteRef.current = true;
       return;
     }
 
     if (!autoStart) return;
 
-    let timeoutId: NodeJS.Timeout;
     let controls: { stop: () => void } | null = null;
 
-    timeoutId = setTimeout(() => {
+    const timeoutId = setTimeout(() => {
       controls = animate(from, to, {
         duration,
         ease: [0.16, 1, 0.3, 1], // easeOutExpo equivalent
@@ -63,7 +61,7 @@ export function useCountUp({
       clearTimeout(timeoutId);
       if (controls) controls.stop();
     };
-  }, [from, to, duration, delay, shouldReduceMotion]);
+  }, [from, to, duration, delay, shouldReduceMotion, autoStart]);
 
   // Subtle live tick flicker every ~6 seconds after count up completes
   useEffect(() => {

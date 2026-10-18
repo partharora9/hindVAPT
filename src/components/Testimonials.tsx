@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import {
   motion,
   useInView,
@@ -10,7 +10,7 @@ import {
 } from "framer-motion";
 import { TestimonialsHeader } from "./testimonials/TestimonialsHeader";
 import { TestimonialCarousel } from "./testimonials/TestimonialCarousel";
-import { FloatingBadgeCard } from "./FloatingBadgeCard";
+import { TESTIMONIALS_DATA } from "./testimonials/testimonialsData";
 import { EASINGS } from "@/config/animation";
 
 interface TestimonialsProps {
@@ -20,11 +20,9 @@ interface TestimonialsProps {
 
 export function Testimonials({
   id = "testimonials",
-  showFloatingBadge = false,
 }: TestimonialsProps) {
   const sectionRef = useRef<HTMLElement | null>(null);
   const shouldReduceMotion = useReducedMotion();
-  const [badgeVisible, setBadgeVisible] = useState(showFloatingBadge);
 
   // Entrance trigger when section is ~25% in view (once)
   const isInView = useInView(sectionRef, { amount: 0.25, once: true });
@@ -38,11 +36,20 @@ export function Testimonials({
   const headerParallaxY = useTransform(scrollYProgress, [0, 1], [-8, 8]);
   const contentParallaxY = useTransform(scrollYProgress, [0, 1], [-4, 4]);
 
+  const isProduction = process.env.NODE_ENV === "production";
+  const verifiedItems = TESTIMONIALS_DATA.filter((item) => item.isVerified);
+  const displayItems = isProduction ? verifiedItems : TESTIMONIALS_DATA;
+
+  // Build guard: if in production and no testimonials are verified, skip rendering completely
+  if (isProduction && verifiedItems.length === 0) {
+    return null;
+  }
+
   return (
     <section
       ref={sectionRef}
       id={id}
-      className="relative w-full bg-gradient-to-b from-[#020617] via-[#020617] to-[#030818] overflow-hidden select-none pt-20 sm:pt-28 pb-16 lg:pb-24 border-b border-[rgba(30,155,255,0.15)]"
+      className="content-auto relative w-full bg-gradient-to-b from-[#020617] via-[#020617] to-[#030818] overflow-hidden select-none pt-20 sm:pt-28 pb-16 lg:pb-24 border-b border-[rgba(30,155,255,0.15)]"
       aria-label="Customer Testimonials: Businesses That Trust Our Defence"
     >
       {/* 1. SEAMLESS BACKGROUND GRID & VIGNETTE CONTINUITY */}
@@ -76,7 +83,7 @@ export function Testimonials({
           style={{ y: shouldReduceMotion ? 0 : contentParallaxY }}
           className="w-full flex justify-center mt-2"
         >
-          <TestimonialCarousel isInView={isInView} />
+          <TestimonialCarousel isInView={isInView} items={displayItems} />
         </motion.div>
       </div>
 
@@ -95,15 +102,8 @@ export function Testimonials({
           aria-hidden="true"
         />
       </div>
-
-      {/* Optional Floating Badge Card (Default OFF) */}
-      <FloatingBadgeCard
-        isVisible={badgeVisible}
-        onClose={() => setBadgeVisible(false)}
-      />
     </section>
   );
 }
 
-// Named alias matching deliverable specification
 export { Testimonials as TestimonialsSection };

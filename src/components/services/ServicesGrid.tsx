@@ -110,10 +110,10 @@ export function ServicesGrid({ isInView = true }: ServicesGridProps) {
       )}
 
       {/* 5. The 9 Service Cells */}
-      <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 list-none p-0 m-0">
+      <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 list-none p-0 m-0">
         {SERVICES_DATA.map((item, index) => {
-          // In 2-col mode on medium screens, 9th item spans both columns
-          const isLastInTwoCols = index === 8 ? "md:col-span-2 lg:col-span-1" : "";
+          // In 2-col mode (<1024px), 9th item spans both columns centered
+          const isLastInTwoCols = index === 8 ? "sm:col-span-2 lg:col-span-1" : "";
           return (
             <li key={item.id} className={isLastInTwoCols}>
               <ServiceCell item={item} index={index} isInView={isInView} />

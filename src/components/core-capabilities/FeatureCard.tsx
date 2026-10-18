@@ -264,21 +264,21 @@ export function FeatureCard({
           >
             {/* RENDER MOCK FOR CARD 1: REAL-TIME THREAT DETECTION */}
             {card.mockType === "detection" && (
-              <div className="relative w-full flex flex-col sm:flex-row items-center sm:items-start justify-center gap-4 sm:gap-6">
+              <div className="relative w-full flex flex-col md:flex-row items-center md:items-start justify-center gap-4 sm:gap-6">
                 {/* Left Stack: TOP SOURCES Panel + Bottom TickRuler */}
-                <div className="flex flex-col items-center sm:items-start gap-3">
+                <div className="flex flex-col items-center md:items-start gap-3 w-full md:w-auto">
                   <TopSourcesPanel isInView={true} isActive={isActive} parallaxOffset={parallaxOffset} />
 
                   {/* TickRuler sparkline below Top Sources panel */}
-                  <div className="pl-2">
+                  <div className="pl-2 hidden sm:block">
                     <TickRuler width={260} />
                   </div>
                 </div>
 
                 {/* Right Stack: Top TickRuler + Attack Vectors Panel (offset lower) */}
-                <div className="flex flex-col items-center sm:items-start gap-3 sm:mt-5">
+                <div className="flex flex-col items-center md:items-start gap-3 md:mt-5 w-full md:w-auto">
                   {/* TickRuler sparkline above Attack Vectors panel */}
-                  <div className="pl-1">
+                  <div className="pl-1 hidden sm:block">
                     <TickRuler width={220} />
                   </div>
 
@@ -289,16 +289,16 @@ export function FeatureCard({
 
             {/* RENDER MOCK FOR CARD 2: AUTOMATED INCIDENT RESPONSE */}
             {card.mockType === "response" && (
-              <div className="relative w-full flex flex-col sm:flex-row items-center sm:items-start justify-center gap-4 sm:gap-6">
-                <div className="flex flex-col items-center sm:items-start gap-3">
+              <div className="relative w-full flex flex-col md:flex-row items-center md:items-start justify-center gap-4 sm:gap-6">
+                <div className="flex flex-col items-center md:items-start gap-3 w-full md:w-auto">
                   <ResponseActionsPanel parallaxOffset={parallaxOffset} />
-                  <div className="pl-2">
+                  <div className="pl-2 hidden sm:block">
                     <TickRuler width={260} />
                   </div>
                 </div>
 
-                <div className="flex flex-col items-center sm:items-start gap-3 sm:mt-5">
-                  <div className="pl-1">
+                <div className="flex flex-col items-center md:items-start gap-3 md:mt-5 w-full md:w-auto">
+                  <div className="pl-1 hidden sm:block">
                     <TickRuler width={220} />
                   </div>
                   <PlaybookRunsPanel parallaxOffset={parallaxOffset} />
@@ -308,16 +308,16 @@ export function FeatureCard({
 
             {/* RENDER MOCK FOR CARD 3: UNIFIED ATTACK SURFACE */}
             {card.mockType === "exposure" && (
-              <div className="relative w-full flex flex-col sm:flex-row items-center sm:items-start justify-center gap-4 sm:gap-6">
-                <div className="flex flex-col items-center sm:items-start gap-3">
+              <div className="relative w-full flex flex-col md:flex-row items-center md:items-start justify-center gap-4 sm:gap-6">
+                <div className="flex flex-col items-center md:items-start gap-3 w-full md:w-auto">
                   <AssetExposurePanel parallaxOffset={parallaxOffset} />
-                  <div className="pl-2">
+                  <div className="pl-2 hidden sm:block">
                     <TickRuler width={260} />
                   </div>
                 </div>
 
-                <div className="flex flex-col items-center sm:items-start gap-3 sm:mt-5">
-                  <div className="pl-1">
+                <div className="flex flex-col items-center md:items-start gap-3 md:mt-5 w-full md:w-auto">
+                  <div className="pl-1 hidden sm:block">
                     <TickRuler width={220} />
                   </div>
                   <ExposureScorePanel parallaxOffset={parallaxOffset} />

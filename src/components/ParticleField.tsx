@@ -1,100 +1,105 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import React, { useEffect, useRef } from "react";
+import { useMotionGovernance } from "@/context/MotionContext";
+import { useSharedTicker } from "@/hooks/useSharedTicker";
+import { useSectionInView } from "@/hooks/useSectionInView";
 import type { Particle, StarDust } from "@/types";
 
 interface ParticleFieldProps {
-  xOffset?: any;
-  yOffset?: any;
+  xOffset?: unknown;
+  yOffset?: unknown;
   className?: string;
   inView?: boolean;
 }
 
 export function ParticleField({
-  xOffset,
-  yOffset,
   className = "",
   inView = true,
 }: ParticleFieldProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const shouldReduceMotion = useReducedMotion();
-  const [isMounted, setIsMounted] = useState(false);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const { reduced, tier } = useMotionGovernance();
+  const isSectionVisible = useSectionInView(containerRef, "200px 0px 200px 0px");
+
+  const isLowTier = reduced || tier === "low";
+  const shouldAnimate = inView && isSectionVisible && !isLowTier;
+
+  const starsRef = useRef<StarDust[]>([]);
+  const orbsRef = useRef<Particle[]>([]);
+  const dimensionsRef = useRef({ width: 700, height: 800, centerX: 350, centerY: 400 });
 
   useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (!isMounted) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext("2d", { alpha: true });
     if (!ctx) return;
 
-    let width = (canvas.width = canvas.parentElement?.clientWidth || 700);
-    let height = (canvas.height = canvas.parentElement?.clientHeight || 800);
+    const width = canvas.parentElement?.clientWidth || 700;
+    const height = canvas.parentElement?.clientHeight || 800;
+    dimensionsRef.current = {
+      width,
+      height,
+      centerX: width / 2,
+      centerY: height / 2,
+    };
 
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const maxDpr = tier === "high" ? 2 : tier === "medium" ? 1.5 : 1;
+    const dpr = Math.min(window.devicePixelRatio || 1, maxDpr);
     canvas.width = width * dpr;
     canvas.height = height * dpr;
+    canvas.style.width = `${width}px`;
+    canvas.style.height = `${height}px`;
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.scale(dpr, dpr);
 
     const isSmallScreen = width < 768;
-    const orbCount = isSmallScreen ? 16 : 32;
-    const starCount = isSmallScreen ? 25 : 55;
+    const orbCount = isLowTier ? 8 : tier === "medium" || isSmallScreen ? 14 : 30;
+    const starCount = isLowTier ? 15 : tier === "medium" || isSmallScreen ? 25 : 55;
 
-    const centerX = width / 2;
-    const centerY = height / 2;
-
-    // Initialize glowing orbs
-    const orbs: Particle[] = [];
     const colors = [
-      "rgba(30, 155, 255,",   // Cyan blue
-      "rgba(0, 229, 255,",    // Electric cyan
-      "rgba(56, 171, 255,",   // Soft azure
-      "rgba(10, 100, 220,",   // Deep electric blue
+      "rgba(30, 155, 255,",
+      "rgba(0, 229, 255,",
+      "rgba(56, 171, 255,",
+      "rgba(10, 100, 220,",
     ];
 
+    const orbs: Particle[] = [];
     for (let i = 0; i < orbCount; i++) {
       const angle = Math.random() * Math.PI * 2;
-      const orbitRadiusX = 140 + Math.random() * 220;
-      const orbitRadiusY = 120 + Math.random() * 200;
-      const speed = (0.0003 + Math.random() * 0.0006) * (Math.random() > 0.5 ? 1 : -1);
-      const radius = 4 + Math.random() * 14;
-      const baseAlpha = 0.15 + Math.random() * 0.45;
-      const color = colors[Math.floor(Math.random() * colors.length)];
-
+      const orbitRadiusX = 120 + Math.random() * (width * 0.42);
+      const orbitRadiusY = 120 + Math.random() * (height * 0.42);
       orbs.push({
-        x: centerX + Math.cos(angle) * orbitRadiusX,
-        y: centerY + Math.sin(angle) * orbitRadiusY,
-        radius,
+        x: dimensionsRef.current.centerX + Math.cos(angle) * orbitRadiusX,
+        y: dimensionsRef.current.centerY + Math.sin(angle) * orbitRadiusY,
+        radius: 2.5 + Math.random() * 4,
+        speed: (Math.random() * 0.0003 + 0.00015) * (Math.random() > 0.5 ? 1 : -1),
+        angle,
         orbitRadiusX,
         orbitRadiusY,
-        angle,
-        speed,
-        alpha: baseAlpha,
-        baseAlpha,
-        color,
-        blur: radius * 1.5,
+        alpha: 0.15 + Math.random() * 0.4,
+        baseAlpha: 0.15 + Math.random() * 0.4,
+        blur: Math.random() * 2,
+        color: colors[Math.floor(Math.random() * colors.length)],
       });
     }
+    orbsRef.current = orbs;
 
-    // Initialize twinkling star-dust
     const stars: StarDust[] = [];
     for (let i = 0; i < starCount; i++) {
       stars.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        size: 0.8 + Math.random() * 1.6,
-        alpha: 0.1 + Math.random() * 0.5,
-        twinkleSpeed: 0.002 + Math.random() * 0.005,
+        size: Math.random() * 1.5 + 0.5,
+        alpha: Math.random() * 0.5 + 0.1,
+        twinkleSpeed: Math.random() * 0.002 + 0.001,
         twinklePhase: Math.random() * Math.PI * 2,
       });
     }
+    starsRef.current = stars;
 
-    if (shouldReduceMotion) {
-      // Draw static particles once
+    // Static frame for low tier
+    if (isLowTier) {
       ctx.clearRect(0, 0, width, height);
       stars.forEach((s) => {
         ctx.fillStyle = `rgba(195, 212, 255, ${s.alpha})`;
@@ -102,104 +107,58 @@ export function ParticleField({
         ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
         ctx.fill();
       });
-
-      ctx.globalCompositeOperation = "lighter";
-      orbs.forEach((o) => {
-        const grad = ctx.createRadialGradient(o.x, o.y, 0, o.x, o.y, o.radius * 2);
-        grad.addColorStop(0, `${o.color} ${o.alpha})`);
-        grad.addColorStop(0.5, `${o.color} ${o.alpha * 0.4})`);
-        grad.addColorStop(1, `${o.color} 0)`);
-        ctx.fillStyle = grad;
-        ctx.beginPath();
-        ctx.arc(o.x, o.y, o.radius * 2, 0, Math.PI * 2);
-        ctx.fill();
-      });
-      return;
     }
+  }, [tier, isLowTier]);
 
-    let animationFrameId: number;
-    let isVisible = true;
+  useSharedTicker((_, delta) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
 
-    const handleVisibility = () => {
-      isVisible = document.visibilityState === "visible";
-    };
-    document.addEventListener("visibilitychange", handleVisibility);
+    const { width, height, centerX, centerY } = dimensionsRef.current;
+    ctx.clearRect(0, 0, width, height);
 
-    const handleResize = () => {
-      if (!canvas.parentElement) return;
-      width = canvas.parentElement.clientWidth;
-      height = canvas.parentElement.clientHeight;
-      canvas.width = width * dpr;
-      canvas.height = height * dpr;
-      ctx.scale(dpr, dpr);
-    };
+    // 1. Draw star-dust
+    ctx.globalCompositeOperation = "source-over";
+    starsRef.current.forEach((s) => {
+      s.twinklePhase += s.twinkleSpeed * delta;
+      const currentAlpha = s.alpha * (0.6 + 0.4 * Math.sin(s.twinklePhase));
+      ctx.fillStyle = `rgba(195, 212, 255, ${currentAlpha})`;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+      ctx.fill();
+    });
 
-    window.addEventListener("resize", handleResize);
+    // 2. Draw glowing orbs with additive blending
+    ctx.globalCompositeOperation = "lighter";
+    orbsRef.current.forEach((o) => {
+      o.angle += o.speed * delta;
+      o.x = centerX + Math.cos(o.angle) * o.orbitRadiusX;
+      o.y = centerY + Math.sin(o.angle) * o.orbitRadiusY;
 
-    let lastTime = performance.now();
+      const pulse = 0.8 + 0.2 * Math.sin(o.angle * 3);
+      const drawRadius = o.radius * 2.2;
 
-    const render = (time: number) => {
-      if (!inView || !isVisible) {
-        animationFrameId = requestAnimationFrame(render);
-        return;
-      }
+      const grad = ctx.createRadialGradient(o.x, o.y, 0, o.x, o.y, drawRadius);
+      grad.addColorStop(0, `${o.color} ${o.alpha * pulse})`);
+      grad.addColorStop(0.45, `${o.color} ${o.alpha * 0.4 * pulse})`);
+      grad.addColorStop(1, `${o.color} 0)`);
 
-      const delta = time - lastTime;
-      lastTime = time;
-
-      ctx.clearRect(0, 0, width, height);
-
-      // 1. Draw star-dust
-      ctx.globalCompositeOperation = "source-over";
-      stars.forEach((s) => {
-        s.twinklePhase += s.twinkleSpeed * delta;
-        const currentAlpha = s.alpha * (0.6 + 0.4 * Math.sin(s.twinklePhase));
-        ctx.fillStyle = `rgba(195, 212, 255, ${currentAlpha})`;
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
-        ctx.fill();
-      });
-
-      // 2. Draw glowing orbs with additive blending
-      ctx.globalCompositeOperation = "lighter";
-      orbs.forEach((o) => {
-        o.angle += o.speed * delta;
-        o.x = centerX + Math.cos(o.angle) * o.orbitRadiusX;
-        o.y = centerY + Math.sin(o.angle) * o.orbitRadiusY;
-
-        const pulse = 0.8 + 0.2 * Math.sin(o.angle * 3);
-        const drawRadius = o.radius * 2.2;
-
-        const grad = ctx.createRadialGradient(o.x, o.y, 0, o.x, o.y, drawRadius);
-        grad.addColorStop(0, `${o.color} ${o.alpha * pulse})`);
-        grad.addColorStop(0.45, `${o.color} ${o.alpha * 0.4 * pulse})`);
-        grad.addColorStop(1, `${o.color} 0)`);
-
-        ctx.fillStyle = grad;
-        ctx.beginPath();
-        ctx.arc(o.x, o.y, drawRadius, 0, Math.PI * 2);
-        ctx.fill();
-      });
-
-      animationFrameId = requestAnimationFrame(render);
-    };
-
-    animationFrameId = requestAnimationFrame(render);
-
-    return () => {
-      cancelAnimationFrame(animationFrameId);
-      document.removeEventListener("visibilitychange", handleVisibility);
-      window.removeEventListener("resize", handleResize);
-    };
-  }, [inView, shouldReduceMotion, isMounted]);
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(o.x, o.y, drawRadius, 0, Math.PI * 2);
+      ctx.fill();
+    });
+  }, shouldAnimate);
 
   return (
-    <motion.div
-      style={{ x: xOffset, y: yOffset }}
-      className={`absolute inset-0 pointer-events-none z-15 ${className}`}
-      aria-hidden="true"
-    >
-      <canvas ref={canvasRef} className="w-full h-full block" />
-    </motion.div>
+    <div ref={containerRef} className={`absolute inset-0 pointer-events-none ${className}`}>
+      <canvas
+        ref={canvasRef}
+        aria-hidden="true"
+        className="w-full h-full select-none"
+      />
+    </div>
   );
 }

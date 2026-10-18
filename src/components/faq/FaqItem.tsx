@@ -89,9 +89,9 @@ export function FaqItem({
         aria-expanded={isOpen}
         aria-controls={`${item.id}-panel`}
         onClick={onToggle}
-        className="relative z-10 w-full min-h-[100px] sm:min-h-[110px] lg:min-h-[120px] flex items-center justify-between text-left px-3 sm:px-6 py-4 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-[#1E9BFF] focus-visible:ring-offset-2 focus-visible:ring-offset-[#020617] group"
+        className="relative z-10 w-full min-h-[64px] sm:min-h-[96px] lg:min-h-[120px] flex items-center justify-between text-left px-3 sm:px-6 py-5 sm:py-6 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-[#1E9BFF] focus-visible:ring-offset-2 focus-visible:ring-offset-[#020617] group"
       >
-        {/* Content Wrapper: shifts 8px right on hover */}
+        {/* Content Wrapper */}
         <motion.div
           animate={{
             x: shouldReduceMotion ? 0 : isHovered ? 8 : 0,
@@ -102,12 +102,12 @@ export function FaqItem({
             damping: 26,
           }}
           whileTap={{ scale: 0.995 }}
-          className="flex items-center flex-1 gap-6 sm:gap-8 pr-4"
+          className="flex items-center flex-1 gap-4 sm:gap-8 pr-3 min-w-0"
         >
-          {/* Number [01] … [06] (Regular weight, tabular numerals, accent #1E9BFF) */}
-          <div className="relative shrink-0 overflow-hidden">
+          {/* Number [01] … [06] (Fixed 48px width) */}
+          <div className="relative w-[48px] shrink-0 overflow-hidden text-left">
             <span
-              className={`font-mono text-[20px] sm:text-[23px] lg:text-[24px] font-normal tracking-tight tabular-nums transition-all duration-300 ${
+              className={`font-mono text-[18px] sm:text-[23px] lg:text-[24px] font-normal tracking-tight tabular-nums transition-all duration-300 ${
                 isOpen
                   ? "text-[#1E9BFF] [text-shadow:0_0_12px_rgba(30,155,255,0.75)]"
                   : isHovered
@@ -129,9 +129,9 @@ export function FaqItem({
             )}
           </div>
 
-          {/* Question Text (~24px, bold, uppercase, single line on desktop) */}
+          {/* Question Text (~16px on mobile, allowed to wrap to 3 lines) */}
           <h3
-            className={`font-mono text-[17px] sm:text-[21px] lg:text-[24px] font-bold uppercase tracking-normal leading-[1.3] transition-colors duration-250 ${
+            className={`font-mono text-[16px] sm:text-[20px] lg:text-[24px] font-bold uppercase tracking-normal leading-[1.35] transition-colors duration-250 min-w-0 break-words ${
               isOpen || isHovered ? "text-white glow-text-white" : "text-[#C3D4FF]"
             }`}
           >

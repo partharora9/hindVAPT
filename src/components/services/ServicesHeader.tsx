@@ -7,6 +7,8 @@ import { SectionTag } from "./SectionTag";
 import { useScramble } from "@/hooks/useScramble";
 import { EASINGS } from "@/config/animation";
 
+import { SERVICES_CONTENT } from "@/content/services";
+
 interface ServicesHeaderProps {
   isInView?: boolean;
 }
@@ -15,13 +17,13 @@ export function ServicesHeader({ isInView = true }: ServicesHeaderProps) {
   const shouldReduceMotion = useReducedMotion();
 
   // Scramble decode on headline
-  const headlineLine1 = useScramble("END-TO-END PROTECTION", {
+  const headlineLine1 = useScramble(SERVICES_CONTENT.headlineLine1, {
     durationMs: 750,
     delayMs: 350,
     autoStart: isInView,
   });
 
-  const headlineLine2 = useScramble("AGAINST CYBER THREATS", {
+  const headlineLine2 = useScramble(SERVICES_CONTENT.headlineLine2, {
     durationMs: 750,
     delayMs: 450,
     autoStart: isInView,

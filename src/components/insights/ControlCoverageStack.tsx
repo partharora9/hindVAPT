@@ -18,18 +18,24 @@ export function ControlCoverageStack({
   const rows = [
     {
       id: "row-1",
-      label: "Mapped & Passing",
-      iconType: "globe",
+      label: "Critical: fix immediately",
+      badge: "P0",
+      badgeColor: "bg-red-500/20 text-red-400 border-red-500/40",
+      iconColor: "#EF4444",
     },
     {
       id: "row-2",
-      label: "Mapped & Passing",
-      iconType: "pie",
+      label: "High: fix this sprint",
+      badge: "P1",
+      badgeColor: "bg-orange-500/20 text-orange-400 border-orange-500/40",
+      iconColor: "#F97316",
     },
     {
       id: "row-3",
-      label: "Unmapped Controls",
-      iconType: "layers",
+      label: "Medium: plan next release",
+      badge: "P2",
+      badgeColor: "bg-amber-500/20 text-amber-400 border-amber-500/40",
+      iconColor: "#F59E0B",
     },
   ];
 
@@ -60,7 +66,6 @@ export function ControlCoverageStack({
           }}
           className="relative w-[447px] max-w-[85%] h-[16px] rounded-t-[10px] bg-[#0C1830]/60 border-t border-l border-r border-[#1E9BFF]/25 overflow-visible"
         >
-          {/* Corner Ticks */}
           <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-[#1E9BFF]/60 rounded-tl-[10px]" />
           <div className="absolute top-0 right-0 w-2 h-2 border-t-2 border-r-2 border-[#1E9BFF]/60 rounded-tr-[10px]" />
         </motion.div>
@@ -88,13 +93,12 @@ export function ControlCoverageStack({
           }}
           className="relative w-[490px] max-w-[92%] h-[16px] rounded-t-[10px] bg-[#0F223D]/75 border-t border-l border-r border-[#1E9BFF]/35 overflow-visible -mt-2"
         >
-          {/* Corner Ticks */}
           <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-[#1E9BFF]/80 rounded-tl-[10px]" />
           <div className="absolute top-0 right-0 w-2 h-2 border-t-2 border-r-2 border-[#1E9BFF]/80 rounded-tr-[10px]" />
         </motion.div>
       </div>
 
-      {/* 2. Main Pill "Control Coverage" (~537×58px) */}
+      {/* 2. Main Pill "Remediation Plan" (~537×58px) */}
       <motion.div
         initial={
           shouldReduceMotion
@@ -116,12 +120,10 @@ export function ControlCoverageStack({
           background: "linear-gradient(180deg, #183C64 0%, #102640 100%)",
         }}
       >
-        {/* Ambient Top Glow Line */}
         <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#1E9BFF]/60 to-transparent" />
 
-        {/* 4-Point Sparkle Icon (Spins 90deg on entrance, twinkles) */}
+        {/* 4-Point Sparkle Icon */}
         <motion.div
-          initial={shouldReduceMotion ? { rotate: 0 } : { rotate: -90, scale: 0 }}
           animate={
             isInView
               ? {
@@ -145,13 +147,13 @@ export function ControlCoverageStack({
           </svg>
         </motion.div>
 
-        {/* Text "Control Coverage" */}
+        {/* Text "Remediation Plan" */}
         <span className="font-mono text-[17px] sm:text-[18px] font-semibold text-[#1E9BFF] tracking-wide">
-          Control Coverage
+          Remediation Plan
         </span>
       </motion.div>
 
-      {/* 3. Status Rows Panel (~537×153px, #1A2A44 fill, 12px radius) */}
+      {/* 3. Status Rows Panel (~537×153px) */}
       <motion.div
         initial={
           shouldReduceMotion
@@ -173,7 +175,6 @@ export function ControlCoverageStack({
         }}
         className="relative z-10 w-full mt-3.5 rounded-[12px] bg-[#1A2A44] border border-[rgba(30,155,255,0.2)] overflow-hidden shadow-[0_8px_30px_rgba(0,0,0,0.45)]"
       >
-        {/* Highlight Sweep down the rows every ~4s */}
         {!shouldReduceMotion && (
           <motion.div
             animate={{
@@ -199,53 +200,43 @@ export function ControlCoverageStack({
               delay: 0.55 + idx * 0.09,
               ease: EASINGS.cyber,
             }}
-            className={`flex items-center gap-3.5 px-5 py-3.5 sm:py-4 transition-colors duration-200 ${
+            className={`flex items-center justify-between px-5 py-3.5 sm:py-4 transition-colors duration-200 ${
               idx < rows.length - 1 ? "border-b border-[rgba(255,255,255,0.06)]" : ""
             } hover:bg-[#1E3354]`}
           >
-            {/* Circular Thin-Line Icon */}
-            <motion.div
-              animate={
-                shouldReduceMotion
-                  ? { scale: 1 }
-                  : {
-                      scale: [1, 1.15, 1],
-                      opacity: [0.8, 1, 0.8],
-                    }
-              }
-              transition={{
-                duration: 2.4,
-                repeat: Infinity,
-                delay: idx * 0.7,
-                ease: "easeInOut",
-              }}
-              className="w-7 h-7 rounded-full bg-[rgba(30,155,255,0.12)] border border-[rgba(30,155,255,0.35)] flex items-center justify-center shrink-0 text-[#3AA8FF]"
-            >
-              {row.iconType === "globe" && (
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
-                  <circle cx="12" cy="12" r="10" />
-                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-                  <path d="M2 12h20" />
-                </svg>
-              )}
-              {row.iconType === "pie" && (
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
-                  <path d="M21.21 15.89A10 10 0 1 1 8 2.83" />
-                  <path d="M22 12A10 10 0 0 0 12 2v10z" />
-                </svg>
-              )}
-              {row.iconType === "layers" && (
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
-                  <polygon points="12 2 2 7 12 12 22 7 12 2" />
-                  <polyline points="2 17 12 22 22 17" />
-                  <polyline points="2 12 12 17 22 12" />
-                </svg>
-              )}
-            </motion.div>
+            <div className="flex items-center gap-3.5">
+              <motion.div
+                animate={
+                  shouldReduceMotion
+                    ? { scale: 1 }
+                    : {
+                        scale: [1, 1.15, 1],
+                        opacity: [0.8, 1, 0.8],
+                      }
+                }
+                transition={{
+                  duration: 2.4,
+                  repeat: Infinity,
+                  delay: idx * 0.7,
+                  ease: "easeInOut",
+                }}
+                className="w-7 h-7 rounded-full bg-[rgba(30,155,255,0.12)] border border-[rgba(30,155,255,0.35)] flex items-center justify-center shrink-0"
+              >
+                <div
+                  className="w-2.5 h-2.5 rounded-full"
+                  style={{ backgroundColor: row.iconColor }}
+                />
+              </motion.div>
 
-            {/* Label */}
-            <span className="font-mono text-[14px] sm:text-[15px] font-medium text-[#D5E2FF] tracking-wide">
-              {row.label}
+              <span className="font-mono text-[14px] sm:text-[15px] font-medium text-[#D5E2FF] tracking-wide">
+                {row.label}
+              </span>
+            </div>
+
+            <span
+              className={`font-mono text-[11px] font-bold px-2 py-0.5 rounded border ${row.badgeColor}`}
+            >
+              {row.badge}
             </span>
           </motion.div>
         ))}

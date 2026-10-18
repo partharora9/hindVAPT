@@ -7,12 +7,13 @@ import { EASINGS } from "@/config/animation";
 
 interface SectionTagProps {
   isInView?: boolean;
+  label?: string;
 }
 
-export function SectionTag({ isInView = true }: SectionTagProps) {
+export function SectionTag({ isInView = true, label = "THE THREAT LANDSCAPE" }: SectionTagProps) {
   const shouldReduceMotion = useReducedMotion();
 
-  const scrambledText = useScramble("THE THREAT LANDSCAPE", {
+  const scrambledText = useScramble(label, {
     durationMs: 650,
     delayMs: 100,
     autoStart: isInView,

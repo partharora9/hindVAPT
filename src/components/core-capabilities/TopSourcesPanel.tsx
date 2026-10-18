@@ -1,42 +1,47 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { motion, useReducedMotion, AnimatePresence } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { MagnifierLens } from "./MagnifierLens";
+import { SampleDataBadge } from "@/components/ui/SampleDataBadge";
 
-interface SourceRowItem {
+interface FindingRowItem {
   id: string;
-  type: "bug" | "globe" | "cloud";
+  type: "injection" | "access" | "cloud";
   title: string;
   subtitle: string;
-  baseEvH: number;
-  barPercent: number;
+  severity: "Critical" | "High";
+  severityColor: string;
+  cvss: number;
 }
 
-const INITIAL_ROWS: SourceRowItem[] = [
+const FINDING_ROWS: FindingRowItem[] = [
   {
-    id: "source-1",
-    type: "bug",
-    title: "Phishing Wave",
-    subtitle: "Compromised Bucket",
-    baseEvH: 112,
-    barPercent: 42,
+    id: "finding-1",
+    type: "injection",
+    title: "SQL Injection",
+    subtitle: "Login API · CVSS 9.8",
+    severity: "Critical",
+    severityColor: "#FF4C68",
+    cvss: 9.8,
   },
   {
-    id: "source-2",
-    type: "globe",
-    title: "APT29 (COZY BEAR)",
-    subtitle: "Origin: Russia",
-    baseEvH: 243,
-    barPercent: 82,
+    id: "finding-2",
+    type: "access",
+    title: "Broken Access Control",
+    subtitle: "Admin panel · CVSS 8.1",
+    severity: "High",
+    severityColor: "#FF8E3C",
+    cvss: 8.1,
   },
   {
-    id: "source-3",
+    id: "finding-3",
     type: "cloud",
-    title: "AWS US-EAST-1",
-    subtitle: "Compromised Bucket",
-    baseEvH: 112,
-    barPercent: 42,
+    title: "Cloud Storage Exposure",
+    subtitle: "Object storage · CVSS 7.5",
+    severity: "High",
+    severityColor: "#FF8E3C",
+    cvss: 7.5,
   },
 ];
 
@@ -47,48 +52,23 @@ interface TopSourcesPanelProps {
 }
 
 export function TopSourcesPanel({
-  isInView = true,
   isActive = true,
   parallaxOffset = { x: 0, y: 0 },
 }: TopSourcesPanelProps) {
   const shouldReduceMotion = useReducedMotion();
-  const [metrics, setMetrics] = useState<number[]>([112, 243, 112]);
   const [activeHighlightIndex, setActiveHighlightIndex] = useState<number>(0);
-  const [flashingIndex, setFlashingIndex] = useState<number | null>(null);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-
-  // Live metric tick variations every 3.5s (paused on covered cards)
-  useEffect(() => {
-    if (shouldReduceMotion || !isActive) return;
-
-    const interval = setInterval(() => {
-      const targetRow = Math.floor(Math.random() * 3);
-      const delta = (Math.random() > 0.5 ? 1 : -1) * (Math.floor(Math.random() * 12) + 3);
-
-      setMetrics((prev) => {
-        const next = [...prev];
-        const base = INITIAL_ROWS[targetRow].baseEvH;
-        next[targetRow] = Math.max(80, Math.min(380, base + delta));
-        return next;
-      });
-
-      setFlashingIndex(targetRow);
-      setTimeout(() => setFlashingIndex(null), 500);
-    }, 3800);
-
-    return () => clearInterval(interval);
-  }, [shouldReduceMotion]);
 
   // Feed highlight sweep down rows every 4s
   useEffect(() => {
-    if (shouldReduceMotion) return;
+    if (shouldReduceMotion || !isActive) return;
 
     const interval = setInterval(() => {
       setActiveHighlightIndex((prev) => (prev + 1) % 3);
     }, 4200);
 
     return () => clearInterval(interval);
-  }, [shouldReduceMotion]);
+  }, [shouldReduceMotion, isActive]);
 
   return (
     <motion.div
@@ -105,26 +85,19 @@ export function TopSourcesPanel({
       <div className="relative z-10 flex items-center justify-between pb-3 border-b border-[rgba(120,150,255,0.08)]">
         <div className="flex items-center gap-2">
           <span className="text-[13px] sm:text-[14px] font-bold tracking-[0.12em] text-[#C3D4FF] uppercase font-mono">
-            TOP SOURCES
+            TOP FINDINGS
           </span>
         </div>
-        <div className="flex items-center gap-1.5">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#1E9BFF] animate-pulse" />
-          <span className="text-[11px] text-[#6B7FA8] font-mono tracking-wider">LIVE</span>
+        <div className="flex items-center gap-2">
+          <SampleDataBadge />
         </div>
       </div>
 
-      {/* 3 Source Rows */}
+      {/* 3 Finding Rows */}
       <div className="relative z-10 flex flex-col gap-2.5 my-auto">
-        {INITIAL_ROWS.map((row, idx) => {
+        {FINDING_ROWS.map((row, idx) => {
           const isHighlighted = activeHighlightIndex === idx;
-          const isFlashing = flashingIndex === idx;
           const isHovered = hoveredIndex === idx;
-          const currentEvH = metrics[idx];
-          const dynamicPercent = Math.min(
-            100,
-            Math.max(20, Math.round((currentEvH / 300) * 100))
-          );
 
           return (
             <motion.div
@@ -152,117 +125,67 @@ export function TopSourcesPanel({
                       : "bg-[#0E1A30] border border-[rgba(30,155,255,0.18)]"
                   }`}
                 >
-                  {row.type === "bug" && (
-                    <motion.svg
-                      animate={
-                        !shouldReduceMotion && (idx === 0 || isHovered)
-                          ? { rotate: [0, -4, 4, 0] }
-                          : { rotate: 0 }
-                      }
-                      transition={{ duration: 0.35, repeat: Infinity, repeatDelay: 3 }}
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      className="w-5 h-5 text-[#4CB8FF]"
-                      stroke="currentColor"
-                      strokeWidth="1.7"
-                    >
-                      {/* Cyber Bug / Beetle */}
-                      <rect x="7" y="7" width="10" height="12" rx="4" />
-                      <line x1="12" y1="7" x2="12" y2="19" />
-                      {/* Antennae */}
-                      <path d="M9 7 L6 3" strokeLinecap="round" />
-                      <path d="M15 7 L18 3" strokeLinecap="round" />
-                      {/* Legs */}
-                      <path d="M7 10 H3" strokeLinecap="round" />
-                      <path d="M17 10 H21" strokeLinecap="round" />
-                      <path d="M7 15 H3" strokeLinecap="round" />
-                      <path d="M17 15 H21" strokeLinecap="round" />
-                    </motion.svg>
-                  )}
-
-                  {row.type === "globe" && (
-                    <svg
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      className="w-5 h-5 text-[#4CB8FF]"
-                      stroke="currentColor"
-                      strokeWidth="1.7"
-                    >
-                      {/* Globe */}
-                      <circle cx="12" cy="12" r="8" />
-                      <line x1="4" y1="12" x2="20" y2="12" />
-                      <ellipse cx="12" cy="12" rx="4" ry="8" />
+                  {row.type === "injection" && (
+                    <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5 text-[#FF4C68]" stroke="currentColor" strokeWidth="1.8">
+                      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
                     </svg>
                   )}
-
+                  {row.type === "access" && (
+                    <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5 text-[#FF8E3C]" stroke="currentColor" strokeWidth="1.8">
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                      <path d="M7 11V7a5 5 0 0 1 9.9-1" />
+                    </svg>
+                  )}
                   {row.type === "cloud" && (
-                    <svg
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      className="w-5 h-5 text-[#4CB8FF]"
-                      stroke="currentColor"
-                      strokeWidth="1.7"
-                    >
-                      {/* Cloud */}
-                      <path
-                        d="M6 18H17A4 4 0 0 0 17 10A5 5 0 0 0 7 12A3.5 3.5 0 0 0 6 18Z"
-                        strokeLinejoin="round"
-                      />
+                    <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5 text-[#1E9BFF]" stroke="currentColor" strokeWidth="1.8">
+                      <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" />
                     </svg>
                   )}
                 </div>
 
-                {/* Name line and gray mono sub-line */}
+                {/* Title + Subtitle */}
                 <div className="flex flex-col">
-                  <span className="text-[13px] sm:text-[14px] font-bold text-white group-hover:text-[#C3D4FF] transition-colors leading-tight">
+                  <span className="text-[13px] sm:text-[14px] font-bold text-white tracking-tight leading-tight group-hover:text-[#4CB8FF] transition-colors">
                     {row.title}
                   </span>
-                  <span className="text-[10px] sm:text-[11px] text-[#8FA3C7] font-mono tracking-wider mt-0.5">
+                  <span className="text-[11px] text-[#8FA3C7] font-mono tracking-tight mt-0.5">
                     {row.subtitle}
                   </span>
                 </div>
               </div>
 
-              {/* Right: Metric in accent blue + short progress bar */}
-              <div className="flex flex-col items-end gap-1.5 pl-2">
-                <motion.span
-                  animate={
-                    isFlashing
-                      ? { color: ["#FFFFFF", "#4CB8FF"], scale: [1.1, 1] }
-                      : { color: "#4CB8FF", scale: 1 }
-                  }
-                  transition={{ duration: 0.3 }}
-                  className="text-[13px] sm:text-[14px] font-mono font-bold tracking-wide"
+              {/* Right: Severity Badge */}
+              <div className="flex flex-col items-end gap-1 shrink-0">
+                <span
+                  className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider border"
+                  style={{
+                    color: row.severityColor,
+                    borderColor: `${row.severityColor}40`,
+                    backgroundColor: `${row.severityColor}15`,
+                  }}
                 >
-                  {currentEvH} ev/h
-                </motion.span>
-
-                {/* Progress bar underneath */}
-                <div className="w-[84px] sm:w-[100px] h-1.5 bg-[#0B1426] rounded-full overflow-hidden border border-[rgba(76,184,255,0.2)]">
-                  <motion.div
-                    className="h-full bg-gradient-to-r from-[#1E9BFF] to-[#4CB8FF] rounded-full"
-                    animate={{
-                      width: `${isHovered ? Math.min(100, dynamicPercent + 8) : dynamicPercent}%`,
-                    }}
-                    transition={{
-                      type: "spring",
-                      stiffness: 90,
-                      damping: 15,
-                    }}
-                  />
-                </div>
+                  {row.severity}
+                </span>
+                <span className="text-[10px] font-mono text-[#6B7FA8]">
+                  CVSS {row.cvss}
+                </span>
               </div>
             </motion.div>
           );
         })}
       </div>
 
-      {/* Magnifying Glass Lens overlapping lower-right over row 3 */}
+      {/* Decorative Magnifier Lens overlay on hover */}
       <MagnifierLens
-        className="bottom-2 right-4 sm:right-6"
-        parallaxX={parallaxOffset.x * 1.3}
-        parallaxY={parallaxOffset.y * 1.3}
+        isParentHovered={hoveredIndex !== null}
+        focalText={hoveredIndex !== null ? FINDING_ROWS[hoveredIndex].title : "SQL Injection"}
       />
+
+      {/* Footer Meta Row */}
+      <div className="relative z-10 flex items-center justify-between pt-2 border-t border-[rgba(120,150,255,0.08)] text-[11px] font-mono text-[#8FA3C7]">
+        <span>All findings manually validated</span>
+        <span className="text-[#4CB8FF] font-semibold">100% verified</span>
+      </div>
     </motion.div>
   );
 }

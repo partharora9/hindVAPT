@@ -31,14 +31,12 @@ export function useScramble(
 
   useEffect(() => {
     if (shouldReduceMotion) {
-      setDisplayText(targetText);
       return;
     }
 
     if (!autoStart) return;
 
     let startTime: number | null = null;
-    let timeoutId: NodeJS.Timeout;
 
     const animate = (time: number) => {
       if (!startTime) startTime = time;
@@ -68,7 +66,7 @@ export function useScramble(
       }
     };
 
-    timeoutId = setTimeout(() => {
+    const timeoutId = setTimeout(() => {
       frameRef.current = requestAnimationFrame(animate);
     }, delayMs);
 

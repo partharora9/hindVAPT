@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import { motion, useInView, useReducedMotion } from "framer-motion";
 import { SectionHeader } from "./core-capabilities/SectionHeader";
 import { CardStack } from "./core-capabilities/CardStack";
-import { FloatingBadgeCard } from "./FloatingBadgeCard";
 import { EASINGS } from "@/config/animation";
 
 interface CoreCapabilitiesProps {
@@ -14,12 +13,10 @@ interface CoreCapabilitiesProps {
 
 export function CoreCapabilities({
   id = "capabilities",
-  showFloatingBadge = false,
 }: CoreCapabilitiesProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const isInView = useInView(sectionRef, { once: true, amount: 0.15 });
   const shouldReduceMotion = useReducedMotion();
-  const [badgeVisible, setBadgeVisible] = useState(showFloatingBadge);
 
   return (
     <section
@@ -60,7 +57,7 @@ export function CoreCapabilities({
       </div>
 
       {/* 2. SECTION CONTENT */}
-      <div className="relative z-10 w-full pt-16 sm:pt-20">
+      <div className="relative z-10 w-full pt-12 sm:pt-16 lg:pt-20">
         {/* Centered Section Header */}
         <SectionHeader isInView={isInView} />
 
@@ -83,12 +80,6 @@ export function CoreCapabilities({
           aria-hidden="true"
         />
       </div>
-
-      {/* Optional Floating Badge Card (Default OFF) */}
-      <FloatingBadgeCard
-        isVisible={badgeVisible}
-        onClose={() => setBadgeVisible(false)}
-      />
     </section>
   );
 }

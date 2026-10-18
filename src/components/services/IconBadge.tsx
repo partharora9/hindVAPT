@@ -27,7 +27,7 @@ export function IconBadge({
         duration: 0.3,
         ease: [0.22, 1, 0.36, 1],
       }}
-      className="relative w-[70px] h-[70px] rounded-full flex items-center justify-center select-none"
+      className="relative w-[64px] h-[64px] lg:w-[70px] lg:h-[70px] rounded-full flex items-center justify-center select-none"
     >
       {/* 1. Outer Rotating Gradient Ring SVG */}
       <svg

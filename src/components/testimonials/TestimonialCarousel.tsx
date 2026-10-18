@@ -4,13 +4,17 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { PortraitPanel } from "./PortraitPanel";
 import { QuoteCard } from "./QuoteCard";
 import { SideNav } from "./SideNav";
-import { TESTIMONIALS_DATA } from "./testimonialsData";
+import { TESTIMONIALS_DATA, type TestimonialItem } from "./testimonialsData";
 
 interface TestimonialCarouselProps {
   isInView?: boolean;
+  items?: TestimonialItem[];
 }
 
-export function TestimonialCarousel({ isInView = true }: TestimonialCarouselProps) {
+export function TestimonialCarousel({
+  isInView = true,
+  items = TESTIMONIALS_DATA,
+}: TestimonialCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState<number>(1);
   const [isHovered, setIsHovered] = useState(false);
@@ -19,21 +23,25 @@ export function TestimonialCarousel({ isInView = true }: TestimonialCarouselProp
   const AUTOPLAY_DURATION_MS = 7000;
   const UPDATE_INTERVAL_MS = 50;
 
+  const count = items.length;
+
   const handleNext = useCallback(() => {
+    if (count <= 1) return;
     setDirection(1);
-    setCurrentIndex((prev) => (prev + 1) % TESTIMONIALS_DATA.length);
+    setCurrentIndex((prev) => (prev + 1) % count);
     setProgress(0);
-  }, []);
+  }, [count]);
 
   const handlePrev = useCallback(() => {
+    if (count <= 1) return;
     setDirection(-1);
-    setCurrentIndex((prev) => (prev - 1 + TESTIMONIALS_DATA.length) % TESTIMONIALS_DATA.length);
+    setCurrentIndex((prev) => (prev - 1 + count) % count);
     setProgress(0);
-  }, []);
+  }, [count]);
 
   // Autoplay timer with pause on hover/tab hidden
   useEffect(() => {
-    if (!isInView || isHovered) return;
+    if (!isInView || isHovered || count <= 1) return;
 
     const interval = setInterval(() => {
       setProgress((prev) => {
@@ -47,7 +55,7 @@ export function TestimonialCarousel({ isInView = true }: TestimonialCarouselProp
     }, UPDATE_INTERVAL_MS);
 
     return () => clearInterval(interval);
-  }, [isInView, isHovered, handleNext]);
+  }, [isInView, isHovered, handleNext, count]);
 
   // Keyboard navigation
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -82,7 +90,9 @@ export function TestimonialCarousel({ isInView = true }: TestimonialCarouselProp
     touchStartX.current = null;
   };
 
-  const currentTestimonial = TESTIMONIALS_DATA[currentIndex];
+  if (count === 0) return null;
+
+  const currentTestimonial = items[currentIndex % count];
 
   return (
     <div
@@ -99,7 +109,7 @@ export function TestimonialCarousel({ isInView = true }: TestimonialCarouselProp
     >
       {/* 3-Column Main Row Layout */}
       <div className="flex flex-col lg:flex-row items-center lg:items-stretch justify-center gap-6 lg:gap-8 w-full">
-        {/* Column 1: Portrait Photo (~524px wide on desktop) */}
+        {/* Column 1: Portrait Photo */}
         <div className="w-full lg:w-[524px] shrink-0 flex justify-center">
           <PortraitPanel
             testimonial={currentTestimonial}
@@ -108,7 +118,7 @@ export function TestimonialCarousel({ isInView = true }: TestimonialCarouselProp
           />
         </div>
 
-        {/* Column 2: Quote Card (~644px wide on desktop) */}
+        {/* Column 2: Quote Card */}
         <div className="w-full lg:w-[644px] flex-1 flex justify-center">
           <QuoteCard
             testimonial={currentTestimonial}
@@ -118,7 +128,7 @@ export function TestimonialCarousel({ isInView = true }: TestimonialCarouselProp
           />
         </div>
 
-        {/* Column 3: Side Navigation Column (~250px wide on desktop) */}
+        {/* Column 3: Side Navigation Column */}
         <div className="w-full lg:w-[250px] shrink-0 flex justify-center">
           <SideNav
             onPrev={handlePrev}

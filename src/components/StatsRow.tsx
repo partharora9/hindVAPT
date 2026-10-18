@@ -4,45 +4,43 @@ import React from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { statsContainerVariants } from "@/config/animation";
 import { useCountUp } from "@/hooks/useCountUp";
+import { HOME_CONTENT } from "@/content/home";
 
 export function StatsRow() {
   const shouldReduceMotion = useReducedMotion();
+  const [statData1, statData2, statData3] = HOME_CONTENT.hero.stats;
 
-  // Detection rate: counts 0.0 -> 99.9%
+  // Stat 1: 100% FINDINGS VALIDATED
   const stat1 = useCountUp({
     from: 0,
-    to: 99.9,
-    duration: 2.0,
-    delay: 1.6,
-    decimals: 1,
-    suffix: "%",
-    enableLiveTick: true,
-    tickIntervalSeconds: 6,
-  });
-
-  // Response time: animated counter resolving to <1ms
-  const stat2 = useCountUp({
-    from: 45,
-    to: 1,
+    to: statData1.value,
     duration: 1.8,
-    delay: 1.7,
-    decimals: 0,
-    prefix: "<",
-    suffix: "ms",
-    enableLiveTick: true,
-    tickIntervalSeconds: 5,
+    delay: 1.5,
+    decimals: statData1.decimals || 0,
+    suffix: statData1.suffix,
+    enableLiveTick: false,
   });
 
-  // Events analyzed: counts 0 -> 500M+
+  // Stat 2: 10+ TESTING DOMAINS
+  const stat2 = useCountUp({
+    from: 0,
+    to: statData2.value,
+    duration: 1.6,
+    delay: 1.6,
+    decimals: 0,
+    suffix: statData2.suffix,
+    enableLiveTick: false,
+  });
+
+  // Stat 3: 1 FREE RETEST
   const stat3 = useCountUp({
     from: 0,
-    to: 500,
-    duration: 2.2,
-    delay: 1.8,
+    to: statData3.value,
+    duration: 1.2,
+    delay: 1.7,
     decimals: 0,
-    suffix: "M+",
-    enableLiveTick: true,
-    tickIntervalSeconds: 7,
+    suffix: statData3.suffix,
+    enableLiveTick: false,
   });
 
   return (
@@ -50,62 +48,47 @@ export function StatsRow() {
       variants={statsContainerVariants}
       initial="hidden"
       animate="visible"
-      className="grid grid-cols-3 gap-3 sm:gap-6 pt-6 sm:pt-8 mt-2 border-t border-[rgba(30,155,255,0.12)] max-w-[540px]"
+      className="grid grid-cols-3 gap-2 xs:gap-3 sm:gap-6 pt-6 sm:pt-8 mt-2 border-t border-[rgba(30,155,255,0.12)] max-w-[540px] w-full"
     >
-      {/* Stat 1: Detection Rate */}
-      <div className="flex flex-col pr-3 sm:pr-6 border-r border-[rgba(30,155,255,0.15)]">
+      {/* Stat 1: Findings Validated */}
+      <div className="flex flex-col pr-2 xs:pr-3 sm:pr-6 border-r border-[rgba(30,155,255,0.15)] min-w-0">
         <div className="flex items-baseline gap-1">
           <span
-            className={`text-2xl sm:text-3xl lg:text-[34px] font-bold tracking-tight text-[#C3D4FF] tabular-nums transition-colors duration-200 ${
-              stat1.isTicking ? "text-white glow-text-white" : ""
-            }`}
+            className="text-xl xs:text-2xl sm:text-3xl lg:text-[34px] font-bold tracking-tight text-[#C3D4FF] tabular-nums transition-colors duration-200 truncate"
           >
             {stat1.formatted}
           </span>
-          {stat1.isTicking && (
-            <span className="w-1.5 h-1.5 rounded-full bg-[#1E9BFF] animate-ping" />
-          )}
         </div>
-        <span className="text-[10px] sm:text-[11px] font-semibold tracking-[0.2em] text-[#6B7FA8] uppercase mt-1">
-          DETECTION RATE
+        <span className="text-[9px] xs:text-[10px] sm:text-[11px] font-semibold tracking-[0.15em] sm:tracking-[0.2em] text-[#6B7FA8] uppercase mt-1">
+          {statData1.label}
         </span>
       </div>
 
-      {/* Stat 2: Response Time */}
-      <div className="flex flex-col px-3 sm:px-6 border-r border-[rgba(30,155,255,0.15)]">
+      {/* Stat 2: Testing Domains */}
+      <div className="flex flex-col px-2 xs:px-3 sm:px-6 border-r border-[rgba(30,155,255,0.15)] min-w-0">
         <div className="flex items-baseline gap-1">
           <span
-            className={`text-2xl sm:text-3xl lg:text-[34px] font-bold tracking-tight text-[#C3D4FF] tabular-nums transition-colors duration-200 ${
-              stat2.isTicking ? "text-white glow-text-white" : ""
-            }`}
+            className="text-xl xs:text-2xl sm:text-3xl lg:text-[34px] font-bold tracking-tight text-[#C3D4FF] tabular-nums transition-colors duration-200 truncate"
           >
             {stat2.formatted}
           </span>
-          {stat2.isTicking && (
-            <span className="w-1.5 h-1.5 rounded-full bg-[#1E9BFF] animate-ping" />
-          )}
         </div>
-        <span className="text-[10px] sm:text-[11px] font-semibold tracking-[0.2em] text-[#6B7FA8] uppercase mt-1">
-          RESPONSE TIME
+        <span className="text-[9px] xs:text-[10px] sm:text-[11px] font-semibold tracking-[0.15em] sm:tracking-[0.2em] text-[#6B7FA8] uppercase mt-1">
+          {statData2.label}
         </span>
       </div>
 
-      {/* Stat 3: Events Analyzed */}
-      <div className="flex flex-col pl-3 sm:pl-6">
+      {/* Stat 3: Free Retest */}
+      <div className="flex flex-col pl-2 xs:pl-3 sm:pl-6 min-w-0">
         <div className="flex items-baseline gap-1">
           <span
-            className={`text-2xl sm:text-3xl lg:text-[34px] font-bold tracking-tight text-[#C3D4FF] tabular-nums transition-colors duration-200 ${
-              stat3.isTicking ? "text-white glow-text-white" : ""
-            }`}
+            className="text-xl xs:text-2xl sm:text-3xl lg:text-[34px] font-bold tracking-tight text-[#C3D4FF] tabular-nums transition-colors duration-200 truncate"
           >
             {stat3.formatted}
           </span>
-          {stat3.isTicking && (
-            <span className="w-1.5 h-1.5 rounded-full bg-[#1E9BFF] animate-ping" />
-          )}
         </div>
-        <span className="text-[10px] sm:text-[11px] font-semibold tracking-[0.2em] text-[#6B7FA8] uppercase mt-1">
-          EVENTS ANALYZED
+        <span className="text-[9px] xs:text-[10px] sm:text-[11px] font-semibold tracking-[0.15em] sm:tracking-[0.2em] text-[#6B7FA8] uppercase mt-1">
+          {statData3.label}
         </span>
       </div>
     </motion.div>

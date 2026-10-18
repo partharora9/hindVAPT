@@ -89,13 +89,13 @@ export function NewsletterForm({
   const isLabelFloated = isFocused || email.length > 0;
 
   return (
-    <div className="flex flex-col w-full max-w-[360px] select-none">
+    <div className="flex flex-col w-full max-w-full sm:max-w-[360px] select-none">
       {/* 1. HEADING: "Stay connected" (~26px, tracking ~0.05em, #C3D4FF) */}
       <motion.h3
         initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 10 }}
         animate={isInView || shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
         transition={{ duration: 0.6, delay: 0.6, ease: EASINGS.cyber }}
-        className="text-[26px] font-mono font-bold tracking-[0.05em] text-[#C3D4FF] leading-tight"
+        className="text-[24px] sm:text-[26px] font-mono font-bold tracking-[0.05em] text-[#C3D4FF] leading-tight"
       >
         {headingText || "Stay connected"}
       </motion.h3>
@@ -105,12 +105,12 @@ export function NewsletterForm({
         initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 12 }}
         animate={isInView || shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
         transition={{ duration: 0.6, delay: 0.7, ease: EASINGS.cyber }}
-        className="mt-3 text-[16px] leading-[26px] font-mono text-[#8FA3C7] tracking-normal"
+        className="mt-3 text-[15px] sm:text-[16px] leading-[26px] font-mono text-[#8FA3C7] tracking-normal"
       >
-        Join our newsletter and stay updated on the latest trends in digital design
+        Get security insights, vulnerability advisories and updates from our team.
       </motion.p>
 
-      {/* 3. EMAIL FORM FIELD (~360px wide, label/placeholder "E-mail", 2px solid #1E9BFF bottom line, square submit button) */}
+      {/* 3. EMAIL FORM FIELD (full width on mobile, 2px solid #1E9BFF bottom line, 44px submit button) */}
       <motion.form
         onSubmit={handleSubmit}
         animate={isShaking && !shouldReduceMotion ? { x: [-6, 6, -6, 6, -3, 3, 0] } : { x: 0 }}
@@ -149,7 +149,7 @@ export function NewsletterForm({
             className="w-[calc(100%-52px)] bg-transparent border-none outline-none font-mono text-[17px] text-[#D5E2FF] placeholder-transparent pt-1 pb-1 focus:ring-0 select-text"
           />
 
-          {/* Square Submit Button (~40x40px, corner brackets, no fill, dotted arrow) */}
+          {/* Square Submit Button (min touch target 44×44px) */}
           <motion.button
             type="submit"
             disabled={status === "loading" || status === "success"}
@@ -160,7 +160,7 @@ export function NewsletterForm({
             animate={isInView || shouldReduceMotion ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
             transition={{ duration: 0.5, delay: 0.75, ease: EASINGS.cyber }}
             aria-label="Subscribe to newsletter"
-            className="relative flex items-center justify-center w-[40px] h-[40px] bg-transparent cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-[#1E9BFF] focus-visible:ring-offset-2 focus-visible:ring-offset-[#020617] select-none"
+            className="relative flex items-center justify-center w-[44px] h-[44px] bg-transparent cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-[#1E9BFF] focus-visible:ring-offset-2 focus-visible:ring-offset-[#020617] select-none"
             style={{
               backgroundColor: buttonHovered
                 ? "rgba(30, 155, 255, 0.15)"

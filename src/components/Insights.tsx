@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import {
   motion,
   useInView,
@@ -11,9 +11,10 @@ import {
 import { SectionTag } from "./threat-landscape/SectionTag";
 import { HudHeadlineLine } from "./threat-landscape/HudHeadlineLine";
 import { BentoGrid } from "./insights/BentoGrid";
-import { FloatingBadgeCard } from "./FloatingBadgeCard";
 import { useScramble } from "@/hooks/useScramble";
 import { EASINGS } from "@/config/animation";
+
+import { HOME_CONTENT } from "@/content/home";
 
 interface InsightsProps {
   id?: string;
@@ -22,11 +23,9 @@ interface InsightsProps {
 
 export function Insights({
   id = "insights",
-  showFloatingBadge = false,
 }: InsightsProps) {
   const sectionRef = useRef<HTMLElement | null>(null);
   const shouldReduceMotion = useReducedMotion();
-  const [badgeVisible, setBadgeVisible] = useState(showFloatingBadge);
 
   // Entrance trigger when section is ~25% in view (once)
   const isInView = useInView(sectionRef, { amount: 0.25, once: true });
@@ -39,14 +38,14 @@ export function Insights({
 
   const headerParallaxY = useTransform(scrollYProgress, [0, 1], [-8, 8]);
 
-  // Scramble decode on headline (reused from Section 3 specification)
-  const headlineLine1 = useScramble("WHY TRADITIONAL SECURITY", {
+  // Scramble decode on headline
+  const headlineLine1 = useScramble(HOME_CONTENT.insights.headlineLine1, {
     durationMs: 700,
     delayMs: 200,
     autoStart: isInView,
   });
 
-  const headlineLine2 = useScramble("TOOLS FALL SHORT", {
+  const headlineLine2 = useScramble(HOME_CONTENT.insights.headlineLine2, {
     durationMs: 600,
     delayMs: 350,
     autoStart: isInView,
@@ -56,8 +55,8 @@ export function Insights({
     <section
       ref={sectionRef}
       id={id}
-      className="relative w-full bg-gradient-to-b from-[#020617] via-[#020617] to-[#030818] overflow-hidden select-none pt-20 sm:pt-28 pb-16 lg:pb-24 border-b border-[rgba(30,155,255,0.15)]"
-      aria-label="Insights Bento Grid: The Threat Landscape"
+      className="content-auto relative w-full bg-gradient-to-b from-[#020617] via-[#020617] to-[#030818] overflow-hidden select-none pt-20 sm:pt-28 pb-16 lg:pb-24 border-b border-[rgba(30,155,255,0.15)]"
+      aria-label="Reporting: Findings You Can Act On"
     >
       {/* 1. SEAMLESS BACKGROUND GRID & VIGNETTE CONTINUITY */}
       <div className="absolute inset-0 cyber-grid pointer-events-none -z-20" aria-hidden="true" />
@@ -77,14 +76,14 @@ export function Insights({
 
       {/* 2. MAIN SECTION CONTENT WRAPPER */}
       <div className="relative max-w-[1600px] mx-auto px-4 sm:px-8 lg:px-[52px]">
-        {/* ================= 1. REUSED HEADER SECTION (Identical to Section 3) ================= */}
+        {/* ================= 1. REUSED HEADER SECTION ================= */}
         <motion.div
           style={shouldReduceMotion ? {} : { y: headerParallaxY }}
           className="flex flex-col gap-6 mb-12 sm:mb-16"
         >
           {/* Top-Left Tag Badge */}
           <div>
-            <SectionTag isInView={isInView} />
+            <SectionTag isInView={isInView} label={HOME_CONTENT.insights.tag} />
           </div>
 
           {/* Grid Layout: Left Headline + Right Explanatory Paragraph */}
@@ -137,7 +136,7 @@ export function Insights({
                 transition={{ duration: 0.8, delay: 0.5, ease: EASINGS.cyber }}
                 className="text-[16px] sm:text-[17px] lg:text-[18px] leading-[1.68] text-[#C3D4FF] max-w-[560px] font-mono font-normal select-none"
               >
-                Cyber threats evolve faster than legacy tools can adapt. Attackers use AI, automation, and zero-days — your defenses need to keep up.
+                {HOME_CONTENT.insights.paragraph}
               </motion.p>
             </div>
           </div>
@@ -162,12 +161,6 @@ export function Insights({
           aria-hidden="true"
         />
       </div>
-
-      {/* Optional Floating Badge Card (Default OFF) */}
-      <FloatingBadgeCard
-        isVisible={badgeVisible}
-        onClose={() => setBadgeVisible(false)}
-      />
     </section>
   );
 }

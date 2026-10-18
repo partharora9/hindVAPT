@@ -7,6 +7,15 @@ const config: Config = {
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
+    screens: {
+      xs: "360px",
+      sm: "640px",
+      md: "768px",
+      lg: "1024px",
+      xl: "1280px",
+      "2xl": "1536px",
+      "3xl": "1920px",
+    },
     extend: {
       colors: {
         background: "#020617",
@@ -32,6 +41,31 @@ const config: Config = {
           border: "rgba(30, 155, 255, 0.15)",
           borderGlow: "rgba(30, 155, 255, 0.4)",
         },
+      },
+      spacing: {
+        "space-1": "8px",
+        "space-2": "16px",
+        "space-3": "24px",
+        "space-4": "32px",
+        "space-5": "40px",
+        "space-6": "48px",
+        "space-8": "64px",
+        "space-10": "80px",
+        "space-12": "96px",
+        "space-16": "128px",
+      },
+      zIndex: {
+        base: "0",
+        content: "10",
+        sticky: "20",
+        nav: "40",
+        overlay: "50",
+        modal: "60",
+      },
+      borderRadius: {
+        none: "0px",
+        sm: "2px",
+        md: "4px",
       },
       fontFamily: {
         mono: ["var(--font-mono)", "Space Mono", "monospace"],

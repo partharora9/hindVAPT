@@ -11,18 +11,18 @@ interface CoverageGaugeProps {
 export function CoverageGauge({ isInView = true }: CoverageGaugeProps) {
   const shouldReduceMotion = useReducedMotion();
   const [percent, setPercent] = useState(0);
-  const [passingCount, setPassingCount] = useState(0);
-  const [phishingCount, setPhishingCount] = useState(0);
+  const [fixedCount, setFixedCount] = useState(0);
+  const [openCount, setOpenCount] = useState(0);
   const [isGaugeHovered, setIsGaugeHovered] = useState(false);
-  const [hoveredLegendRow, setHoveredLegendRow] = useState<"passing" | "phishing" | null>(null);
+  const [hoveredLegendRow, setHoveredLegendRow] = useState<"fixed" | "open" | null>(null);
 
   // Entrance count-up
   useEffect(() => {
     if (!isInView) return;
     if (shouldReduceMotion) {
       setPercent(84);
-      setPassingCount(1248);
-      setPhishingCount(212);
+      setFixedCount(41);
+      setOpenCount(8);
       return;
     }
 
@@ -34,12 +34,11 @@ export function CoverageGauge({ isInView = true }: CoverageGaugeProps) {
     const timer = setInterval(() => {
       step++;
       const progress = Math.min(step / totalSteps, 1);
-      // easeOutExpo
       const ease = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
 
       setPercent(Math.round(ease * 84));
-      setPassingCount(Math.round(ease * 1248));
-      setPhishingCount(Math.round(ease * 212));
+      setFixedCount(Math.round(ease * 41));
+      setOpenCount(Math.round(ease * 8));
 
       if (progress >= 1) clearInterval(timer);
     }, stepTime);
@@ -47,13 +46,11 @@ export function CoverageGauge({ isInView = true }: CoverageGaugeProps) {
     return () => clearInterval(timer);
   }, [isInView, shouldReduceMotion]);
 
-  // Radius = 120, Circumference ≈ 753.98
-  // 84% arc length = 753.98 * 0.84 ≈ 633.34
   const radius = 120;
   const circumference = 2 * Math.PI * radius;
   const targetArc = circumference * 0.84;
 
-  const isHighlighted = isGaugeHovered || hoveredLegendRow === "passing";
+  const isHighlighted = isGaugeHovered || hoveredLegendRow === "fixed";
 
   return (
     <div className="relative w-full max-w-[340px] mx-auto flex flex-col items-center justify-center select-none pt-2">
@@ -63,27 +60,25 @@ export function CoverageGauge({ isInView = true }: CoverageGaugeProps) {
         onMouseEnter={() => setIsGaugeHovered(true)}
         onMouseLeave={() => setIsGaugeHovered(false)}
         role="img"
-        aria-label="Overall mapped control coverage gauge at 84 percent"
+        aria-label="Remediation resolution gauge at 84 percent"
       >
         <svg
           viewBox="0 0 320 320"
           className="w-full h-full -rotate-90 overflow-visible"
         >
           <defs>
-            {/* Bright Accent Gradient */}
             <linearGradient id="gaugeAccentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#1E9BFF" />
-              <stop offset="60%" stopColor="#1FA3FF" />
-              <stop offset="100%" stopColor="#5EC1FF" />
+              <stop offset="60%" stopColor="#22C55E" />
+              <stop offset="100%" stopColor="#4ADE80" />
             </linearGradient>
 
-            {/* Accent Ring Glow Filter */}
             <filter id="gaugeGlow" x="-20%" y="-20%" width="140%" height="140%">
-              <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#1FA3FF" floodOpacity="0.8" />
+              <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#22C55E" floodOpacity="0.8" />
             </filter>
           </defs>
 
-          {/* 1. Thick Dark-Blue Track Ring (#1A4A7A, ~20px thick) */}
+          {/* 1. Dark-Blue Track Ring */}
           <circle
             cx="160"
             cy="160"
@@ -94,7 +89,7 @@ export function CoverageGauge({ isInView = true }: CoverageGaugeProps) {
             opacity="0.85"
           />
 
-          {/* 2. Bright Accent Ring (#1FA3FF, 16px thick, 84% arc) */}
+          {/* 2. Resolved Accent Ring */}
           <motion.circle
             cx="160"
             cy="160"
@@ -113,7 +108,7 @@ export function CoverageGauge({ isInView = true }: CoverageGaugeProps) {
             }}
           />
 
-          {/* Traveling Pulse Highlight around ring every 5s */}
+          {/* Pulse Highlight */}
           {!shouldReduceMotion && isInView && (
             <motion.circle
               cx="160"
@@ -137,7 +132,7 @@ export function CoverageGauge({ isInView = true }: CoverageGaugeProps) {
             />
           )}
 
-          {/* 3. Dark Center Disc (#0B1224) */}
+          {/* 3. Dark Center Disc */}
           <circle
             cx="160"
             cy="160"
@@ -150,7 +145,6 @@ export function CoverageGauge({ isInView = true }: CoverageGaugeProps) {
 
         {/* Center Numbers & Label Overlay */}
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none select-none">
-          {/* "84%" */}
           <motion.span
             animate={
               shouldReduceMotion
@@ -166,50 +160,49 @@ export function CoverageGauge({ isInView = true }: CoverageGaugeProps) {
             {percent}%
           </motion.span>
 
-          {/* "OVERALL MAPPED" */}
           <span className="font-mono text-[13px] sm:text-[15px] font-bold uppercase tracking-[0.16em] text-[#8FA3C7] mt-2">
-            OVERALL MAPPED
+            RESOLVED
           </span>
         </div>
       </div>
 
       {/* 2. LEGEND BELOW GAUGE */}
       <div className="w-full mt-6 flex flex-col gap-2.5 px-3">
-        {/* Row 1: Mapped & Passing */}
+        {/* Row 1: Fixed and verified */}
         <div
-          onMouseEnter={() => setHoveredLegendRow("passing")}
+          onMouseEnter={() => setHoveredLegendRow("fixed")}
           onMouseLeave={() => setHoveredLegendRow(null)}
           className={`flex items-center justify-between py-1 px-2 rounded-[6px] transition-colors cursor-pointer ${
-            hoveredLegendRow === "passing" ? "bg-[rgba(30,155,255,0.1)]" : ""
+            hoveredLegendRow === "fixed" ? "bg-[rgba(30,155,255,0.1)]" : ""
           }`}
         >
           <div className="flex items-center gap-2.5">
             <span className="w-2.5 h-2.5 rounded-full bg-[#22C55E] shrink-0" />
             <span className="font-mono text-[13.5px] sm:text-[14.5px] text-[#C3D4FF] font-medium tracking-wide">
-              Mapped & Passing
+              Fixed and verified
             </span>
           </div>
           <span className="font-mono text-[14px] sm:text-[15px] font-bold text-white tabular-nums">
-            {passingCount.toLocaleString()}
+            {fixedCount}
           </span>
         </div>
 
-        {/* Row 2: Phishing */}
+        {/* Row 2: Open */}
         <div
-          onMouseEnter={() => setHoveredLegendRow("phishing")}
+          onMouseEnter={() => setHoveredLegendRow("open")}
           onMouseLeave={() => setHoveredLegendRow(null)}
           className={`flex items-center justify-between py-1 px-2 rounded-[6px] transition-colors cursor-pointer ${
-            hoveredLegendRow === "phishing" ? "bg-[rgba(30,155,255,0.1)]" : ""
+            hoveredLegendRow === "open" ? "bg-[rgba(30,155,255,0.1)]" : ""
           }`}
         >
           <div className="flex items-center gap-2.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#F59E0B] shrink-0" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#EF4444] shrink-0" />
             <span className="font-mono text-[13.5px] sm:text-[14.5px] text-[#C3D4FF] font-medium tracking-wide">
-              PHISHING
+              Open
             </span>
           </div>
           <span className="font-mono text-[14px] sm:text-[15px] font-bold text-white tabular-nums">
-            {phishingCount.toLocaleString()}
+            {openCount}
           </span>
         </div>
       </div>

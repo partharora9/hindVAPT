@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { motion, useMotionValue, useSpring, useReducedMotion } from "framer-motion";
 import { useScramble } from "@/hooks/useScramble";
 import { EASINGS } from "@/config/animation";
+import { SampleDataBadge } from "@/components/ui/SampleDataBadge";
 import type { InsightCardData } from "./bentoData";
 
 interface InsightCardProps {
@@ -158,6 +159,9 @@ export function InsightCard({
         className="absolute top-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#1E9BFF] to-transparent pointer-events-none z-30"
         aria-hidden="true"
       />
+
+      {/* Sample data watermark badge */}
+      <SampleDataBadge className="absolute top-4 right-4 z-30" />
 
       {/* 3. Ambient Scanline Sweep (~9s cycle with random offset) */}
       {!shouldReduceMotion && (

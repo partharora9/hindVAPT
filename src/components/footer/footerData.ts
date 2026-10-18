@@ -1,7 +1,7 @@
-export interface FooterLinkItem {
-  label: string;
-  href: string;
-}
+import { FOOTER_CONTENT, type FooterLinkItem } from "@/content/footer";
+import { SITE_CONFIG } from "@/content/site";
+
+export type { FooterLinkItem };
 
 export interface FooterSocialItem {
   id: string;
@@ -11,46 +11,13 @@ export interface FooterSocialItem {
   ariaLabel: string;
 }
 
-export const MAIN_PAGES_LINKS: FooterLinkItem[] = [
-  { label: "Home", href: "/" },
-  { label: "About", href: "/about" },
-  { label: "PRICING", href: "/pricing" }, // Exact uppercase as in reference
-  { label: "Blog", href: "/blog" },
-  { label: "Case Study", href: "/case-study" },
-  { label: "Blog Details", href: "/blog/sample-post" },
-  { label: "Case Study Details", href: "/case-study/sample" },
-];
+export const MAIN_PAGES_LINKS: FooterLinkItem[] = FOOTER_CONTENT.mainPages;
+export const UTILITY_PAGES_LINKS: FooterLinkItem[] = FOOTER_CONTENT.utilityPages;
 
-export const UTILITY_PAGES_LINKS: FooterLinkItem[] = [
-  { label: "Contact", href: "/contact" },
-  { label: "Style Guide", href: "/style-guide" },
-  { label: "Licenses", href: "/licenses" },
-  { label: "Changelog", href: "/changelog" },
-  { label: "Instruction", href: "/instruction" },
-  { label: "Not Found", href: "/404" },
-  { label: "Password", href: "/password" },
-];
-
-export const SOCIAL_LINKS: FooterSocialItem[] = [
-  {
-    id: "facebook",
-    name: "Facebook",
-    href: "https://facebook.com",
-    icon: "facebook",
-    ariaLabel: "Follow VAULTIX on Facebook",
-  },
-  {
-    id: "instagram",
-    name: "Instagram",
-    href: "https://instagram.com",
-    icon: "instagram",
-    ariaLabel: "Follow VAULTIX on Instagram",
-  },
-  {
-    id: "linkedin",
-    name: "LinkedIn",
-    href: "https://linkedin.com",
-    icon: "linkedin",
-    ariaLabel: "Follow VAULTIX on LinkedIn",
-  },
-];
+export const SOCIAL_LINKS: FooterSocialItem[] = SITE_CONFIG.footer.socials.map((s) => ({
+  id: s.id,
+  name: s.name,
+  href: s.href,
+  icon: s.icon,
+  ariaLabel: s.ariaLabel,
+}));
