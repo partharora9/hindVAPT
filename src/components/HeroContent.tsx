@@ -28,7 +28,7 @@ export function HeroContent({
   const shouldReduceMotion = useReducedMotion();
   const { reduced, isTouch } = useMotionGovernance();
   const [isPrimaryHovered, setIsPrimaryHovered] = useState(false);
-  const [isOutlineHovered, setIsOutlineHovered] = useState(false);
+  const [_isOutlineHovered, setIsOutlineHovered] = useState(false);
 
   // Scramble decode effect for line 1 and line 2
   const line1Text = useScramble(HOME_CONTENT.hero.headlineLine1, {
@@ -103,11 +103,8 @@ export function HeroContent({
         {/* 1. Primary Solid Accent Button */}
         <Link
           href={HOME_CONTENT.hero.ctaPrimary.href}
-          onClick={(e) => {
-            if (onStartTrial) {
-              e.preventDefault();
-              onStartTrial();
-            }
+          onClick={() => {
+            if (onStartTrial) onStartTrial();
           }}
           onMouseEnter={() => !isTouch && setIsPrimaryHovered(true)}
           onMouseLeave={() => !isTouch && setIsPrimaryHovered(false)}
@@ -125,11 +122,8 @@ export function HeroContent({
         {/* 2. Secondary Outlined Button with Corner Brackets */}
         <Link
           href={HOME_CONTENT.hero.ctaSecondary.href}
-          onClick={(e) => {
-            if (onSeeHowItWorks) {
-              e.preventDefault();
-              onSeeHowItWorks();
-            }
+          onClick={() => {
+            if (onSeeHowItWorks) onSeeHowItWorks();
           }}
           onMouseEnter={() => !isTouch && setIsOutlineHovered(true)}
           onMouseLeave={() => !isTouch && setIsOutlineHovered(false)}

@@ -15,12 +15,12 @@ interface NavbarProps {
   onStartTrial?: () => void;
 }
 
-export function Navbar({ onStartTrial }: NavbarProps) {
+export function Navbar({ onStartTrial: _onStartTrial }: NavbarProps = {}) {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState(pathname === "/about" ? "about" : "home");
   const [hasScrolled, setHasScrolled] = useState(false);
-  const { reduced, isTouch } = useMotionGovernance();
+  const { reduced: _reduced, isTouch: _isTouch } = useMotionGovernance();
   const menuRef = useRef<HTMLDivElement | null>(null);
 
   // Sync active section on route change
@@ -147,6 +147,13 @@ export function Navbar({ onStartTrial }: NavbarProps) {
     href: string,
     id: string
   ) => {
+    if (pathname === "/" && (href === "/" || href === "/#home")) {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      setActiveSection("home");
+      window.history.pushState(null, "", "/");
+      return;
+    }
     if (pathname === "/" && href.startsWith("/#")) {
       const sectionId = href.replace("/#", "");
       const targetEl = document.getElementById(sectionId);
@@ -246,12 +253,6 @@ export function Navbar({ onStartTrial }: NavbarProps) {
         <div className="flex items-center gap-4">
           <Link
             href={SITE_CONFIG.nav.cta.href}
-            onClick={(e) => {
-              if (onStartTrial) {
-                e.preventDefault();
-                onStartTrial();
-              }
-            }}
             className="relative hidden sm:inline-flex items-center justify-center min-h-[44px] px-6 py-3 bg-[#1E9BFF] text-[#020617] text-[13px] font-bold tracking-[0.18em] uppercase rounded-none overflow-hidden transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#1E9BFF] focus-visible:ring-offset-2 focus-visible:ring-offset-[#020617] outline-none cursor-pointer hover:shadow-[0_0_32px_rgba(30,155,255,0.65)] active:scale-[0.97]"
           >
             <span className="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full hover:animate-[shimmer_1.5s_infinite]" />
@@ -359,10 +360,7 @@ export function Navbar({ onStartTrial }: NavbarProps) {
             <div className="w-full pt-6 border-t border-[rgba(30,155,255,0.15)]">
               <Link
                 href={SITE_CONFIG.nav.cta.href}
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  onStartTrial?.();
-                }}
+                onClick={() => setMobileMenuOpen(false)}
                 className="block w-full min-h-[48px] py-4 bg-[#1E9BFF] text-[#020617] text-sm font-bold tracking-[0.2em] uppercase text-center cursor-pointer shadow-[0_0_24px_rgba(30,155,255,0.5)] active:scale-[0.98] transition-transform"
               >
                 {SITE_CONFIG.nav.cta.label}

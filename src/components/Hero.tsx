@@ -18,9 +18,9 @@ import { DURATIONS, dividerVariants } from "@/config/animation";
 import type { HeroProps } from "@/types";
 
 export function Hero({
-  onCtaClick,
-  onLearnMoreClick,
-}: HeroProps) {
+  onCtaClick: _onCtaClick,
+  onLearnMoreClick: _onLearnMoreClick,
+}: HeroProps = {}) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const shouldReduceMotion = useReducedMotion();
   const { isTouch } = useMotionGovernance();
@@ -93,7 +93,7 @@ export function Hero({
       </div>
 
       {/* 3. NAVBAR (~104px height fixed header) */}
-      <Navbar onStartTrial={onCtaClick} />
+      <Navbar />
 
       {/* 4. MAIN HERO CONTAINER */}
       <div className="relative flex-1 max-w-[1600px] w-full mx-auto px-6 sm:px-10 lg:pl-[52px] lg:pr-6 flex flex-col justify-center my-auto py-8 lg:py-12">
@@ -114,10 +114,7 @@ export function Hero({
             style={shouldReduceMotion ? {} : { y: heroContentY }}
             className="w-full flex justify-start z-20"
           >
-            <HeroContent
-              onStartTrial={onCtaClick}
-              onSeeHowItWorks={onLearnMoreClick}
-            />
+            <HeroContent />
           </motion.div>
 
           {/* Right Column: Visual layers (traces, rings, shield, particles) */}

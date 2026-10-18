@@ -40,7 +40,7 @@ export const SITE_CONFIG: SiteConfig = {
   },
   nav: {
     items: [
-      { id: "home", label: "HOME", href: "/#home" },
+      { id: "home", label: "HOME", href: "/" },
       { id: "about", label: "ABOUT", href: "/about" },
       { id: "pricing", label: "PRICING", href: "/pricing" },
       { id: "blog", label: "BLOG", href: "/blog" },
